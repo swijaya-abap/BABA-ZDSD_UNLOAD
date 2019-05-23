@@ -1,0 +1,19 @@
+
+.green {
+ background-color: #66FF33;
+}
+.red {
+ background-color: #FF3300;
+}
+.yellow {
+    /*color: #00F !important;*/
+    /*font-size: 24px !important;*/
+     /*background-color: #FF3300;*/
+     color: yellow;
+}
+
+.printAreaBox {
+    max-width: 210mm;
+    margin: auto;
+    background-color: white;
+}

@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog id="DesDialog" resizable="false" contentWidth="auto" draggable="true">
+		<Input id="FETDES"/>
+		<beginButton>
+			<Button text="Fetch" press="onAddDesd"/>
+		</beginButton>
+		<endButton>
+			<Button text="Cancel" press="onDesCloseDialog"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
