@@ -64,6 +64,9 @@ sap.ui.define([
 
 			var oModelt1 = new JSONModel();
 			this.getView().byId("oSelect2").setModel(oModelt1);
+				
+			var myModel = this.getOwnerComponent().getModel();
+			myModel.setSizeLimit(500);
 
 			this.oSearchField = this.getView().byId("NMATNR");
 		},
