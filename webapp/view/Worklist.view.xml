@@ -170,17 +170,17 @@
 		</semantic:content>
 		<semantic:customFooterContent>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button17" press="onRest" icon="sap-icon://unlocked"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button8" press="onSer" icon="sap-icon://search"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button9" press="onRef" icon="sap-icon://refresh"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button3" press="onUnc" icon="sap-icon://activity-items"/>
-			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button2" press="onPri" icon="sap-icon://print"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button1" press="onSave1" icon="sap-icon://save"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button2" press="onPri" icon="sap-icon://print"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button13" press="onSearch0" icon="sap-icon://filter" text="Filter Zero Qty"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button19" press="onSearchN" icon="sap-icon://filter" text="Filter New Item"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button12" press="onAddS" icon="sap-icon://add-product"
 				text="Add Material(by Description)"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button15" press="onAddDes" icon="sap-icon://detail-view"
 				text="Search Material(by Description)"/>
-			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button8" press="onSer" icon="sap-icon://search" text="Search by EAN"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button20" press="onAll" icon="sap-icon://decrease-line-height"
 				text="Show All items"/>
 		</semantic:customFooterContent>
