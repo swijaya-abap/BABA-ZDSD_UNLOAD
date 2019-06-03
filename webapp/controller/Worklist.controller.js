@@ -854,6 +854,8 @@ sap.ui.define([
 								that.getView().byId("CONF").setSelected(false);
 								that.getView().byId("TOUR").setValue();
 								that.getView().byId("oSelect2").setSelectedKey();
+							}else{
+								that.onFet();
 							}
 
 							// var val12 = oData.HEADITEMNAV.results[0].SERVQUOT;
