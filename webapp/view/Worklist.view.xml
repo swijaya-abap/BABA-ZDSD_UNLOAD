@@ -179,6 +179,7 @@
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button19" press="onSearchN" icon="sap-icon://filter" text="Filter New Item"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button12" press="onAddS" icon="sap-icon://add-product"
 				text="Add Material(by Description)"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button4" press="onAddByEAN" icon="sap-icon://add-product" text="Add Material by EAN"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button15" press="onAddDes" icon="sap-icon://detail-view"
 				text="Search Material(by Description)"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button20" press="onAll" icon="sap-icon://decrease-line-height"

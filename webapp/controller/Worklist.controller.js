@@ -64,7 +64,7 @@ sap.ui.define([
 
 			var oModelt1 = new JSONModel();
 			this.getView().byId("oSelect2").setModel(oModelt1);
-				
+
 			var myModel = this.getOwnerComponent().getModel();
 			myModel.setSizeLimit(500);
 
@@ -78,6 +78,111 @@ sap.ui.define([
 
 		onBusyE: function (oBusy) {
 			oBusy.close();
+		},
+
+		onOkDialog: function (path) {
+			var that = this;
+			that.onRef();
+			var input = that.getView().byId("FET").getValue();
+
+			that.getView().byId("FET").focus();
+
+			var qval = that.getView().byId("FETV").getValue(); //add
+
+			if (input === "") {
+				sap.m.MessageToast.show("Please provide EAN");
+			} else {
+				var oTable = this.byId("table");
+				var oModel = oTable.getModel();
+				var aItems = oModel.oData.data; //All rows  
+				var flg = "";
+
+				if (aItems !== undefined) {
+					for (var iRowIndex1 = 0; iRowIndex1 < aItems.length; iRowIndex1++) {
+						var l_ean = aItems[iRowIndex1].EAN11;
+
+						if (l_ean === input) {
+							flg = "X";
+							break;
+						}
+					}
+				}
+				if (flg === "X") {
+					sap.m.MessageToast.show("EAN already in the list");
+
+					that.onSearch(that, l_ean); //added new
+
+				} else {
+
+					var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+					var itemData = oModel.getProperty("/data");
+					var oBusy = new sap.m.BusyDialog();
+					that.onBusyS(oBusy);
+
+					oModel1.read("/MATERIALSet(MATNR='" + input + "',VRKME='')", {
+						success: function (oData, oResponse) {
+
+							var res = {};
+							res = oData;
+
+							if (res !== "") {
+								var itemRow = {
+									// MATNR: res.MATNR,
+									// MAKTX: res.MAKTX,
+									// VRKME: res.VRKME,
+									// EAN11: res.EAN11,
+									// KWMENG: qval, //added
+									// NEW: "X",
+									
+									MATNR: res.MATNR,
+									MAKTX: res.MAKTX,
+									UOM: res.VRKME,
+									// RET: res[iRowIndex].RET,
+									QTYD: 0,
+									QTYC: qval,
+									TOUR_ID: res.TOUR_ID,
+									ITEMNR: res.ITEMNR,
+									EAN11: res.EAN11,
+									// COMP: res[iRowIndex].COMP,
+									VAL: res.VRKME,
+									QTYV: 0
+								};
+
+								if (typeof itemData !== "undefined" && itemData.length > 0) {
+									itemData.push(itemRow);
+								} else {
+									itemData = [];
+									itemData.push(itemRow);
+								}
+
+								// // Set Model
+								oModel.setData({
+									data: itemData
+								});
+								oModel.refresh(true);
+							}
+							sap.m.MessageToast.show("Item " + res.MATNR + " added");
+
+							//************************get values from backend based on filter Date*******************************************//
+							that.onBusyE(oBusy);
+
+						},
+						error: function (oResponse) {
+							that.onBusyE(oBusy);
+							var oMsg = JSON.parse(oResponse.responseText);
+							jQuery.sap.require("sap.m.MessageBox");
+							sap.m.MessageToast.show(oMsg.error.message.value);
+							that.byId("Dialog").destroy();
+						}
+					});
+				}
+			}
+
+			that.getView().byId("FET").setValue();
+			that.getView().byId("FETV").setValue();
+			that.getView().byId("EDES").setValue();
+
+			// that.byId("Dialog").destroy();
 		},
 
 		onCloseDialog: function () {
@@ -854,7 +959,7 @@ sap.ui.define([
 								that.getView().byId("CONF").setSelected(false);
 								that.getView().byId("TOUR").setValue();
 								that.getView().byId("oSelect2").setSelectedKey();
-							}else{
+							} else {
 								that.onFet();
 							}
 
@@ -1229,6 +1334,26 @@ sap.ui.define([
 				this._applySearch(aTableSearchState);
 			}
 
+		},
+
+		onAddByEAN: function (oEvent) {
+			var that = this;
+			var oView = that.getView();
+			var tour = that.getView().byId("TOUR")._lastValue;
+			if (tour === "" || tour === undefined) {
+				sap.m.MessageToast.show("Please select tour first");
+			} else {
+				var oDialog = oView.byId("Dialog");
+				// create dialog lazily
+				if (!oDialog) {
+					// create dialog via fragment factory
+					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.Dialog", this);
+					// connect dialog to view (models, lifecycle)
+					oView.addDependent(oDialog);
+				}
+				oDialog.setTitle("Add/Search Material");
+				oDialog.open(that);
+			}
 		},
 
 		onAdd: function (oEvent) {
