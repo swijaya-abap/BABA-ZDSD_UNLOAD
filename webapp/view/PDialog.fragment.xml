@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<Dialog id="Dialog" resizable="false" contentWidth="auto" draggable="true">
+	<Dialog id="Dialog" resizable="true" contentWidth="auto" draggable="true">
 		<HBox>
 			<RadioButton groupName="GroupA" text="All" selected="true" id="ALLA"/>
 			<RadioButton groupName="GroupA" text="BOX" id="BOXA"/>

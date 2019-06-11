@@ -134,6 +134,22 @@
 					</ColumnListItem>
 				</items>
 			</Table>
+			<Table id="materialBrokenTable" visible="false"
+				items="{ path: '/data', sorter: [ { path: 'MATNR', descending: false } ], operationMode: 'Client' }" growing="false"
+				growingScrollToLoad="false">
+				<columns>
+					<Column id="materialBrokenCol1"></Column>
+					<Column id="materialBrokenCol2"></Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text id="materialBrokenMATNR" text="{MATNR}" class="democlass_font"/>
+							<Text id="materialBrokenMAKTX" text="{MAKTX}" class="democlass_font"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
 			<Panel expandable="true" expanded="false" backgroundDesign="Solid" headerText="Search/Add by Material" visible="false">
 				<form:SimpleForm>
 					<!--<Label id="L4" width="100%" text="Add/New Material"></Label>-->
@@ -165,6 +181,8 @@
 					<Input id="PCV" editable="false" textAlign="Right"/>
 					<Label text=" RET:" design="Bold"/>
 					<Input id="RETV" editable="false" textAlign="Right"/>
+					<Label text=" BRK:" design="Bold"/>
+					<Input id="BRKV" editable="false" textAlign="Right"/>
 				</HBox>
 			</form:SimpleForm>
 		</semantic:content>
@@ -180,6 +198,7 @@
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button12" press="onAddS" icon="sap-icon://add-product"
 				text="Add Material(by Description)"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button4" press="onAddByEAN" icon="sap-icon://add-product" text="Add Material by EAN"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button5" press="onAddBroken" icon="sap-icon://add-product" text="Add Broken Material"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button15" press="onAddDes" icon="sap-icon://detail-view"
 				text="Search Material(by Description)"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button20" press="onAll" icon="sap-icon://decrease-line-height"

@@ -65,6 +65,10 @@ sap.ui.define([
 			var oModelt1 = new JSONModel();
 			this.getView().byId("oSelect2").setModel(oModelt1);
 
+			oModelt = new JSONModel();
+			this.getView().byId("materialBrokenTable").setModel(oModelt);
+			this.getView().byId("materialBrokenTable").getModel().setSizeLimit('500');
+
 			var myModel = this.getOwnerComponent().getModel();
 			myModel.setSizeLimit(500);
 
@@ -84,6 +88,7 @@ sap.ui.define([
 			var that = this;
 			that.onRef();
 			var input = that.getView().byId("FET").getValue();
+			var tour = that.getView().byId("TOUR")._lastValue;
 
 			that.getView().byId("FET").focus();
 
@@ -119,7 +124,7 @@ sap.ui.define([
 					var oBusy = new sap.m.BusyDialog();
 					that.onBusyS(oBusy);
 
-					oModel1.read("/MATERIALSet(MATNR='" + input + "',VRKME='')", {
+					oModel1.read("/MATERIALSet(TOUR_ID='" + tour + ",MATNR='" + input + "',VRKME='')", {
 						success: function (oData, oResponse) {
 
 							var res = {};
@@ -133,19 +138,19 @@ sap.ui.define([
 									// EAN11: res.EAN11,
 									// KWMENG: qval, //added
 									// NEW: "X",
-									
+
 									MATNR: res.MATNR,
 									MAKTX: res.MAKTX,
 									UOM: res.VRKME,
 									// RET: res[iRowIndex].RET,
-									QTYD: 0,
+									QTYD: "0",
 									QTYC: qval,
 									TOUR_ID: res.TOUR_ID,
 									ITEMNR: res.ITEMNR,
 									EAN11: res.EAN11,
 									// COMP: res[iRowIndex].COMP,
 									VAL: res.VRKME,
-									QTYV: 0
+									QTYV: "0"
 								};
 
 								if (typeof itemData !== "undefined" && itemData.length > 0) {
@@ -232,6 +237,16 @@ sap.ui.define([
 			// oModel.setData({
 			// 	modelData: noData
 			// });
+			oModel.setData({
+				modelData: data
+			});
+			oModel.refresh(true);
+			oTable.removeSelections(true);
+
+			oModel = that.getView().byId("materialBrokenTable").getModel();
+			oTable = that.getView().byId("materialBrokenTable");
+			noData = oModel.getProperty("/data");
+
 			oModel.setData({
 				modelData: data
 			});
@@ -514,6 +529,7 @@ sap.ui.define([
 			var boxa = that.getView().byId("BOXA").getSelected();
 			var pca = that.getView().byId("PCA").getSelected();
 			var reta = that.getView().byId("RETA").getSelected();
+			var brka = that.getView().byId("BRKA").getSelected();
 
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
 			var date = that.getView().byId("DATE").getValue();
@@ -528,6 +544,8 @@ sap.ui.define([
 				val = "P";
 			} else if (reta === true) {
 				val = "R";
+			} else if (brka === true) {
+				val = "T";
 			}
 			that.onGetM(kunnr, date, uncnf, oModel, val);
 
@@ -576,6 +594,7 @@ sap.ui.define([
 			var boxa = that.getView().byId("BOXAA").getSelected();
 			var pca = that.getView().byId("PCAA").getSelected();
 			var reta = that.getView().byId("RETAA").getSelected();
+			var brka = that.getView().byId("BRKAA").getSelected();
 
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
 			var date = that.getView().byId("DATE").getValue();
@@ -590,6 +609,8 @@ sap.ui.define([
 				val = "P";
 			} else if (reta === true) {
 				val = "R";
+			} else if (brka === true) {
+				val = "T";
 			}
 			that.onGetM(kunnr, date, uncnf, oModel, val);
 			that.byId("ADialog").destroy();
@@ -706,10 +727,12 @@ sap.ui.define([
 					// sap.m.MessageToast.show(oMsg.error.message.value);
 				}
 			});
+			
+			var oBrokenTableModel = that.getView().byId("materialBrokenTable").getModel();
+			that._getBrokenMaterial(oBrokenTableModel);
 		},
 
 		onTick: function () {
-			debugger;
 			var oTable = this.getView().byId("table");
 			var aItems = oTable.getItems(); //All rows  
 			var oModel = oTable.getModel();
@@ -851,8 +874,6 @@ sap.ui.define([
 
 		///////////////////////////////////
 		onSave: function (oEvent) {
-			debugger;
-
 			var that = this;
 			var oTable = that.getView().byId("table");
 			var oModel = oTable.getModel();
@@ -1076,7 +1097,6 @@ sap.ui.define([
 		//},
 
 		onUpdateFinished: function (oEvent) {
-			debugger;
 			var that = this;
 			// 	// update the worklist's object counter after the table update
 			// 	// var sTitle,
@@ -1102,6 +1122,8 @@ sap.ui.define([
 				l_qtyp = 0,
 				l_cntp = 0,
 				l_qtyr = 0,
+				l_qtybrk = 0,
+				l_cntbrk = 0,
 				no = 0,
 				l_cntr = 0;
 			for (var iRowIndex = 0; iRowIndex < aItems.length; iRowIndex++) {
@@ -1131,14 +1153,22 @@ sap.ui.define([
 						l_cntr = l_cntr + 1;
 					}
 				}
+				if (l_val === "TRS") {
+					l_qtybrk = l_qtybrk + cval;
+					if (cval > 0) {
+						l_cntbrk = l_cntbrk + 1;
+					}
+				}
 			}
 
 			var box = l_qtyb + "/" + l_cntb;
 			var pc = l_qtyp + "/" + l_cntp;
 			var ret = l_qtyr + "/" + l_cntr;
+			var brk = l_qtybrk + "/" + l_cntbrk;
 			that.getView().byId("BOXV").setValue(box);
 			that.getView().byId("PCV").setValue(pc);
 			that.getView().byId("RETV").setValue(ret);
+			that.getView().byId("BRKV").setValue(brk);
 
 			// var aItems = oTable1.getItems();
 			// if (aItems && aItems.length > 0) {
@@ -1354,6 +1384,193 @@ sap.ui.define([
 				oDialog.setTitle("Add/Search Material");
 				oDialog.open(that);
 			}
+		},
+
+		onAddBroken: function (oEvent) {
+			var that = this;
+			var oView = that.getView();
+			var tour = that.getView().byId("TOUR")._lastValue;
+			if (tour === "" || tour === undefined) {
+				sap.m.MessageToast.show("Please select tour first");
+			} else {
+				if (this._isNewItem()) {
+					sap.m.MessageToast.show("Please save newly added material first");
+				} else {
+					var oDialog = oView.byId("BrokenDialog");
+					// create dialog lazily
+					if (!oDialog) {
+						// create dialog via fragment factory
+						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.BrokenDialog", this);
+						// connect dialog to view (models, lifecycle)
+						oView.addDependent(oDialog);
+					}
+					oDialog.setTitle("Add Broken Material");
+					oDialog.open(that);
+				}
+			}
+		},
+
+		onOpenBrokenDialog: function (oEvent) {
+			var that = this;
+			var oJSONModel = new JSONModel();
+			this.getView().byId("brokenMaterialCBox").setModel(oJSONModel);
+
+			var oBrokenMatCBoxModel = this.getView().byId("brokenMaterialCBox").getModel();
+			var oBrokenMaterial = that.getView().byId("materialBrokenTable").getModel();
+			var brokenMaterialList = oBrokenMaterial.oData.data;
+			var itemData = oBrokenMatCBoxModel.getProperty("/data");
+			
+			var data;
+			oBrokenMatCBoxModel.setData({
+				modelData: data
+			});
+			oBrokenMatCBoxModel.refresh(true);
+
+			if (brokenMaterialList !== "undefined") {
+				for (var iRowIndex = 0; iRowIndex < brokenMaterialList.length; iRowIndex++) {
+					var itemRow = {
+						MATNR: brokenMaterialList[iRowIndex].MATNR,
+						MAKTX: brokenMaterialList[iRowIndex].MAKTX
+					};
+
+					if (typeof itemData !== "undefined" && itemData.length > 0) {
+						itemData.push(itemRow);
+					} else {
+						itemData = [];
+						itemData.push(itemRow);
+					}
+				}
+				
+				oBrokenMatCBoxModel.setData({
+					data: itemData
+				});
+				oBrokenMatCBoxModel.refresh(true);
+			}
+
+		},
+		
+		onOkBrokenDialog: function (oEvent) {
+			var that = this;
+			var tour = that.getView().byId("TOUR")._lastValue;
+			
+			var input0 = that.getView().byId("brokenMaterialCBox")._lastValue;
+			var input1 = input0.split(" - ");
+			var input = input1[0];
+
+			if (input === "") {
+				var flg_no = "NO";
+				sap.m.MessageToast.show("Please provide input");
+			} else {
+				flg_no = "YES";
+			}
+
+			if (flg_no === "YES") {
+				var val = that.getView().byId("FETV").getValue();
+				var uom = "PC";
+
+				if (tour === "") {
+					sap.m.MessageToast.show("Please select tour first");
+				} else {
+					if ((input !== "" && input !== undefined) && (uom !== "" && uom !== undefined)) {
+						var oTable = this.byId("table");
+						var oModel = oTable.getModel();
+						var aItems = oModel.oData.data; //All rows  
+						var flg = "";
+
+						if (aItems !== undefined) {
+							for (var iRowIndex1 = 0; iRowIndex1 < aItems.length; iRowIndex1++) {
+								// var l_ean11 = oModel.getProperty("EAN11", aItems[iRowIndex1].getBindingContext());
+								var l_matnr = aItems[iRowIndex1].MATNR;
+								var l_uom = aItems[iRowIndex1].UOM;
+								var l_ret = aItems[iRowIndex1].VAL;
+								if (l_matnr === input && l_uom === uom && l_ret === "TRS") {
+									flg = "X";
+									// aItems[iRowIndex1].QTYC = val;
+									// oModel.refresh(true);
+									break;
+								}
+							}
+						}
+						if (flg === "X") {
+							sap.m.MessageToast.show("Material & UOM already in the list");
+						} else {
+
+							// //************************filter Date*******************************************//
+
+							var oBusy = new sap.m.BusyDialog();
+							that.onBusyS(oBusy);
+
+							//************************get values from backend based on filter Date*******************************************//
+
+							var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+							var itemData = oModel.getProperty("/data");
+
+							oModel1.read("/MATERIALBRKSet(TOUR_ID='" + tour + "',MATNR='" + input + "')", {
+								success: function (oData, oResponse) {
+									var res = {};
+									res = oData;
+									that.onRef(that);
+
+									var itemRow = {
+										MATNR: res.MATNR,
+										MAKTX: res.MAKTX,
+										UOM: res.UOM,
+										RET: "2",
+										QTYD: "0",
+										QTYC: val, //res.QTYC,
+										TOUR_ID: res.TOUR_ID,
+										ITEMNR: res.ITEMNR,
+										// EAN11: res.EAN11,
+										// COMP: res[iRowIndex].COMP,
+										VAL: res.VAL,
+										QTYV: "0"
+									};
+
+									if (typeof itemData !== "undefined" && itemData.length > 0) {
+										itemData.push(itemRow);
+									} else {
+										itemData = [];
+										itemData.push(itemRow);
+									}
+
+									// }
+
+									// // Set Model
+									oModel.setData({
+										data: itemData
+									});
+
+									oModel.refresh(true);
+
+									sap.m.MessageToast.show("New Items " + input + "/" + uom + " Added");
+
+									//************************get values from backend based on filter Date*******************************************//
+									that.onBusyE(oBusy);
+
+								},
+								error: function (oResponse) {
+									that.onBusyE(oBusy);
+									var oMsg = JSON.parse(oResponse.responseText);
+									jQuery.sap.require("sap.m.MessageBox");
+									MessageBox.error(oMsg.error.message.value);
+									// sap.m.MessageToast.show(oMsg.error.message.value);
+								}
+							});
+
+							// that.getView().byId("b").setValue();
+							that.getView().byId("FETV").setValue();
+						}
+
+					} else {
+						sap.m.MessageToast.show("Please add material & UOM");
+					}
+				}
+			}	
+		},
+
+		onCloseBrokenDialog: function () {
+			var that = this;
+			that.byId("BrokenDialog").destroy();
 		},
 
 		onAdd: function (oEvent) {
@@ -1683,6 +1900,79 @@ sap.ui.define([
 			// 	aTableSearchState = [new Filter("EAN11", FilterOperator.Contains, sQuery)];
 			// }
 			this._applySearch(aTableSearchState);
+
+		},
+
+		_isNewItem: function (oEvent) {
+			var aTableSearchState = [];
+			var sQuery = "000000"; //oEvent.getParameter("query");
+
+			var flg = "";
+			var oTable = this.byId("table");
+			var oModel = oTable.getModel();
+			var aItems = oModel.oData.data; //All rows  
+
+			for (var iRowIndex1 = 0; iRowIndex1 < aItems.length; iRowIndex1++) {
+				var l_itemnr = aItems[iRowIndex1].ITEMNR;
+				if (l_itemnr === sQuery) {
+					return true;
+				}
+			}
+			return false;
+		},
+
+		_getBrokenMaterial: function (oTableModel) {
+			var that = this;
+			var oBusy = new sap.m.BusyDialog();
+			that.onBusyS(oBusy);
+			var tour = that.getView().byId("TOUR")._lastValue;
+
+			var aTableSearchState = [];
+			that._applySearch(aTableSearchState);
+
+			// //************************filter Date*******************************************//
+			var PLFilters = [];
+			PLFilters.push(new sap.ui.model.Filter({
+				path: "TOUR_ID",
+				operator: sap.ui.model.FilterOperator.EQ,
+				value1: tour
+			}));
+
+			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+			// that.getView().setModel(oModel1);
+			var itemData = oTableModel.getProperty("/data");
+
+			oModel1.read("/MATERIALBRKSet", {
+				filters: PLFilters,
+				success: function (oData, oResponse) {
+					var res = [];
+					res = oData.results;
+
+					if (res.length > 0) {
+						for (var iRowIndex = 0; iRowIndex < res.length; iRowIndex++) {
+							var itemRow = {
+								MATNR: res[iRowIndex].MATNR,
+								MAKTX: res[iRowIndex].MAKTX
+							};
+
+							if (typeof itemData !== "undefined" && itemData.length > 0) {
+								itemData.push(itemRow);
+							} else {
+								itemData = [];
+								itemData.push(itemRow);
+							}
+
+						}
+					}
+
+					// // Set Model
+					oTableModel.setData({
+						data: itemData
+					});
+					oTableModel.refresh(true);
+				}
+			});
+			that.onBusyE(oBusy);
 
 		},
 
