@@ -54,7 +54,7 @@ sap.ui.define([
 
 			var yesterdayDate = new Date();
 
-			yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+			yesterdayDate.setDate(yesterdayDate.getDate());
 
 			this.byId("DATE").setDateValue(yesterdayDate);
 
