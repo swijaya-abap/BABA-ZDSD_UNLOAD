@@ -1,7 +1,7 @@
 {
 	"_version": "1.9.0",
 	"sap.app": {
-		"id": "com.baba.ZDSD_UNLOAD",
+		"id": "com.baba.ZDSD_UNLOAD_V2",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
@@ -11,7 +11,7 @@
 		},
 		"dataSources": {
 			"mainService": {
-				"uri": "/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/",
+				"uri": "/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
@@ -42,7 +42,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "com.baba.ZDSD_UNLOAD.view.App",
+			"viewName": "com.baba.ZDSD_UNLOAD_V2.view.App",
 			"type": "XML",
 			"async": true,
 			"id": "app"
@@ -63,7 +63,7 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "com.baba.ZDSD_UNLOAD.i18n.i18n"
+					"bundleName": "com.baba.ZDSD_UNLOAD_V2.i18n.i18n"
 				}
 			},
 			"": {
@@ -75,7 +75,7 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "com.baba.ZDSD_UNLOAD.view",
+				"viewPath": "com.baba.ZDSD_UNLOAD_V2.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
@@ -126,7 +126,7 @@
 		}
 	},
 	"sap.platform.abap": {
-		"uri": "/sap/bc/ui5_ui5/sap/zdsd_unload/webapp",
+		"uri": "/sap/bc/ui5_ui5/sap/zdsd_unload_v2/webapp",
 		"_version": "1.1.0"
 	}
 }

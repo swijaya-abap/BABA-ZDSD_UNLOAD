@@ -1,10 +1,10 @@
 sap.ui.define([
-		"com/baba/ZDSD_UNLOAD/controller/BaseController",
+		"com/baba/ZDSD_UNLOAD_V2/controller/BaseController",
 		"sap/ui/model/json/JSONModel"
 	], function (BaseController, JSONModel) {
 		"use strict";
 
-		return BaseController.extend("com.baba.ZDSD_UNLOAD.controller.App", {
+		return BaseController.extend("com.baba.ZDSD_UNLOAD_V2.controller.App", {
 
 			onInit : function () {
 				var oViewModel,

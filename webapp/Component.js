@@ -2,12 +2,12 @@
 sap.ui.define([
 		"sap/ui/core/UIComponent",
 		"sap/ui/Device",
-		"com/baba/ZDSD_UNLOAD/model/models",
-		"com/baba/ZDSD_UNLOAD/controller/ErrorHandler"
+		"com/baba/ZDSD_UNLOAD_V2/model/models",
+		"com/baba/ZDSD_UNLOAD_V2/controller/ErrorHandler"
 	], function (UIComponent, Device, models, ErrorHandler) {
 		"use strict";
 
-		return UIComponent.extend("com.baba.ZDSD_UNLOAD.Component", {
+		return UIComponent.extend("com.baba.ZDSD_UNLOAD_V2.Component", {
 
 			metadata : {
 				manifest: "json"

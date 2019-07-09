@@ -1,15 +1,15 @@
 /*global location history */
 sap.ui.define([
-	"com/baba/ZDSD_UNLOAD/controller/BaseController",
+	"com/baba/ZDSD_UNLOAD_V2/controller/BaseController",
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
-	"com/baba/ZDSD_UNLOAD/model/formatter",
+	"com/baba/ZDSD_UNLOAD_V2/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator", "sap/m/Dialog"
 ], function (BaseController, MessageBox, JSONModel, formatter, Filter, FilterOperator, Dialog) {
 	"use strict";
 
-	return BaseController.extend("com.baba.ZDSD_UNLOAD.controller.Worklist", {
+	return BaseController.extend("com.baba.ZDSD_UNLOAD_V2.controller.Worklist", {
 
 		formatter: formatter,
 
@@ -119,7 +119,7 @@ sap.ui.define([
 
 				} else {
 
-					var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+					var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/", true);
 					var itemData = oModel.getProperty("/data");
 					var oBusy = new sap.m.BusyDialog();
 					that.onBusyS(oBusy);
@@ -288,7 +288,7 @@ sap.ui.define([
 				// create dialog lazily
 				if (!oDialog) {
 					// create dialog via fragment factory
-					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.SDialog", this);
+					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V2.view.SDialog", this);
 					// connect dialog to view (models, lifecycle)
 					oView.addDependent(oDialog);
 				}
@@ -347,7 +347,7 @@ sap.ui.define([
 
 				//************************get values from backend based on filter Date*******************************************//
 
-				var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+				var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/", true);
 				// that.getView().setModel(oModel1);
 				var itemData = oModel.getProperty("/data");
 
@@ -437,6 +437,12 @@ sap.ui.define([
 
 				var diff = Number(colVal_tar0) - colVal_qtyd; //count - plan
 
+				var ret = aCells[4].getText();
+				if (ret === "2") {
+					diff = 0;
+					aCells[5].setValue(colVal_tar0);
+				}
+				
 				aCells[6].setValue(colVal_tar0);
 				aCells[7].setValue(diff);
 
@@ -510,7 +516,7 @@ sap.ui.define([
 					// create dialog lazily
 					if (!oDialog) {
 						// create dialog via fragment factory
-						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.PDialog", this);
+						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V2.view.PDialog", this);
 						// connect dialog to view (models, lifecycle)
 						oView.addDependent(oDialog);
 					}
@@ -575,7 +581,7 @@ sap.ui.define([
 					// create dialog lazily
 					if (!oDialog) {
 						// create dialog via fragment factory
-						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.ADialog", this);
+						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V2.view.ADialog", this);
 						// connect dialog to view (models, lifecycle)
 						oView.addDependent(oDialog);
 					}
@@ -658,7 +664,7 @@ sap.ui.define([
 
 			//************************get values from backend based on filter Date*******************************************//
 
-			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/", true);
 			// that.getView().setModel(oModel1);
 			var itemData = oModel.getProperty("/data");
 
@@ -727,7 +733,7 @@ sap.ui.define([
 					// sap.m.MessageToast.show(oMsg.error.message.value);
 				}
 			});
-			
+
 			var oBrokenTableModel = that.getView().byId("materialBrokenTable").getModel();
 			that._getBrokenMaterial(oBrokenTableModel);
 		},
@@ -970,7 +976,7 @@ sap.ui.define([
 					//Using Deep entity the data is posted as shown below .
 					oEntry1.HEADITEMNAV = itemData;
 
-					var oModel2 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+					var oModel2 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/", true);
 
 					oModel2.create("/HEADERSet", oEntry1, {
 						success: function (oData, oResponse) {
@@ -1011,7 +1017,7 @@ sap.ui.define([
 				sap.m.MessageToast.show("No tour data for Print");
 			} else {
 
-				var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/PRINTSet('" + tour + "')/$value";
+				var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/PRINTSet('" + tour + "')/$value";
 				// // var url = "test/Capture.JPG";
 				sap.m.URLHelper.redirect(url, true);
 				// 	var hContent = '<html><head></head><body>';
@@ -1377,7 +1383,7 @@ sap.ui.define([
 				// create dialog lazily
 				if (!oDialog) {
 					// create dialog via fragment factory
-					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.Dialog", this);
+					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V2.view.Dialog", this);
 					// connect dialog to view (models, lifecycle)
 					oView.addDependent(oDialog);
 				}
@@ -1400,7 +1406,7 @@ sap.ui.define([
 					// create dialog lazily
 					if (!oDialog) {
 						// create dialog via fragment factory
-						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.BrokenDialog", this);
+						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V2.view.BrokenDialog", this);
 						// connect dialog to view (models, lifecycle)
 						oView.addDependent(oDialog);
 					}
@@ -1419,7 +1425,7 @@ sap.ui.define([
 			var oBrokenMaterial = that.getView().byId("materialBrokenTable").getModel();
 			var brokenMaterialList = oBrokenMaterial.oData.data;
 			var itemData = oBrokenMatCBoxModel.getProperty("/data");
-			
+
 			var data;
 			oBrokenMatCBoxModel.setData({
 				modelData: data
@@ -1440,7 +1446,7 @@ sap.ui.define([
 						itemData.push(itemRow);
 					}
 				}
-				
+
 				oBrokenMatCBoxModel.setData({
 					data: itemData
 				});
@@ -1448,11 +1454,11 @@ sap.ui.define([
 			}
 
 		},
-		
+
 		onOkBrokenDialog: function (oEvent) {
 			var that = this;
 			var tour = that.getView().byId("TOUR")._lastValue;
-			
+
 			var input0 = that.getView().byId("brokenMaterialCBox")._lastValue;
 			var input1 = input0.split(" - ");
 			var input = input1[0];
@@ -1502,7 +1508,7 @@ sap.ui.define([
 
 							//************************get values from backend based on filter Date*******************************************//
 
-							var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+							var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/", true);
 							var itemData = oModel.getProperty("/data");
 
 							oModel1.read("/MATERIALBRKSet(TOUR_ID='" + tour + "',MATNR='" + input + "')", {
@@ -1565,7 +1571,7 @@ sap.ui.define([
 						sap.m.MessageToast.show("Please add material & UOM");
 					}
 				}
-			}	
+			}
 		},
 
 		onCloseBrokenDialog: function () {
@@ -1618,7 +1624,7 @@ sap.ui.define([
 
 						//************************get values from backend based on filter Date*******************************************//
 
-						var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+						var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/", true);
 						var itemData = oModel.getProperty("/data");
 
 						oModel1.read("/MATERIALGETSet(TOUR_ID='" + tour + "',MATNR='" + input + "',UOM='" + uom + "')", {
@@ -1691,7 +1697,7 @@ sap.ui.define([
 				// create dialog lazily
 				if (!oDialog) {
 					// create dialog via fragment factory
-					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.MDialog", this);
+					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V2.view.MDialog", this);
 					// connect dialog to view (models, lifecycle)
 					oView.addDependent(oDialog);
 				}
@@ -1771,7 +1777,7 @@ sap.ui.define([
 
 							//************************get values from backend based on filter Date*******************************************//
 
-							var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+							var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/", true);
 							var itemData = oModel.getProperty("/data");
 
 							oModel1.read("/MATERIALGETSet(TOUR_ID='" + tour + "',MATNR='" + input + "',UOM='" + uom + "')", {
@@ -1848,7 +1854,7 @@ sap.ui.define([
 				// create dialog lazily
 				if (!oDialog) {
 					// create dialog via fragment factory
-					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD.view.DesDialog", this);
+					oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V2.view.DesDialog", this);
 					// connect dialog to view (models, lifecycle)
 					oView.addDependent(oDialog);
 				}
@@ -1938,7 +1944,7 @@ sap.ui.define([
 				value1: tour
 			}));
 
-			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V2_SRV/", true);
 			// that.getView().setModel(oModel1);
 			var itemData = oTableModel.getProperty("/data");
 

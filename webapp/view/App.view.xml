@@ -1,6 +1,6 @@
 <mvc:View
 	xmlns:mvc="sap.ui.core.mvc"
-	controllerName="com.baba.ZDSD_UNLOAD.controller.App"
+	controllerName="com.baba.ZDSD_UNLOAD_V2.controller.App"
 	displayBlock="true"
 	xmlns="sap.m">
 

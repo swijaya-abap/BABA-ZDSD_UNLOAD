@@ -1,9 +1,9 @@
 sap.ui.define([
-		"com/baba/ZDSD_UNLOAD/controller/BaseController"
+		"com/baba/ZDSD_UNLOAD_V2/controller/BaseController"
 	], function (BaseController) {
 		"use strict";
 
-		return BaseController.extend("com.baba.ZDSD_UNLOAD.controller.NotFound", {
+		return BaseController.extend("com.baba.ZDSD_UNLOAD_V2.controller.NotFound", {
 
 			/**
 			 * Navigates to the worklist when the link is pressed

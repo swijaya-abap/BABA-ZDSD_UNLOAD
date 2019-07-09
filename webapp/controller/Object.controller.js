@@ -1,9 +1,9 @@
 /*global location*/
 sap.ui.define([
-		"com/baba/ZDSD_UNLOAD/controller/BaseController",
+		"com/baba/ZDSD_UNLOAD_V2/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/routing/History",
-		"com/baba/ZDSD_UNLOAD/model/formatter"
+		"com/baba/ZDSD_UNLOAD_V2/model/formatter"
 	], function (
 		BaseController,
 		JSONModel,
@@ -12,7 +12,7 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		return BaseController.extend("com.baba.ZDSD_UNLOAD.controller.Object", {
+		return BaseController.extend("com.baba.ZDSD_UNLOAD_V2.controller.Object", {
 
 			formatter: formatter,
 

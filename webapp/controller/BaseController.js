@@ -3,7 +3,7 @@ sap.ui.define([
 	], function (Controller) {
 		"use strict";
 
-		return Controller.extend("com.baba.ZDSD_UNLOAD.controller.BaseController", {
+		return Controller.extend("com.baba.ZDSD_UNLOAD_V2.controller.BaseController", {
 			/**
 			 * Convenience method for accessing the router.
 			 * @public

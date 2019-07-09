@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="com.baba.ZDSD_UNLOAD.controller.NotFound"
+	controllerName="com.baba.ZDSD_UNLOAD_V2.controller.NotFound"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 

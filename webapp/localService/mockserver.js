@@ -4,7 +4,7 @@ sap.ui.define([
 		"use strict";
 
 		var oMockServer,
-			_sAppModulePath = "com/baba/ZDSD_UNLOAD/",
+			_sAppModulePath = "com/baba/ZDSD_UNLOAD_V2/",
 			_sJsonFilesModulePath = _sAppModulePath + "localService/mockdata";
 
 		return {
