@@ -40,6 +40,9 @@
 						<!--<Label text="Comp." id="label3" width="50%"/>-->
 						<!--</header>-->
 					</Column>
+					<Column id="brokenMatIcon">
+						
+					</Column>
 					<Column id="nameColumn1" vAlign="Top" minScreenWidth="Small" demandPopin="true" popinDisplay="Inline">
 						<header>
 							<Label text="Mat." id="label0"/>
@@ -93,6 +96,8 @@
 							<!--<Text text="{COMP}" id="COMP" textAlign="Center"/>-->
 							<ObjectStatus id="COMP" state="{ path: 'COMP' , formatter: '.formatter.colorval' }"
 								icon="{ path: 'COMP', formatter: '.formatter.colorval1' }"/>
+							<ObjectStatus id="BROKEN" state="{ path: 'IS_BRK' , formatter: '.formatter.dangerColor' }"
+								icon="{ path: 'IS_BRK', formatter: '.formatter.collisionIcon' }"/>
 							<ObjectIdentifier text="{MATNR}-{MAKTX}" id="MATNR"/>
 							<!--<ObjectStatus id="UOM" text="{UOM}" state="{ path: 'UOM', formatter: '.formatter.colorval3' }"-->
 							<!--	class="{=(${UOM}.length > 1 &amp;&amp;) ? yellow : red}" />-->

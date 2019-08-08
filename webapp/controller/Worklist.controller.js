@@ -688,8 +688,9 @@ sap.ui.define([
 								EAN11: res[iRowIndex].EAN11,
 								COMP: res[iRowIndex].COMP,
 								VAL: res[iRowIndex].VAL,
+								IS_BRK: res[iRowIndex].IS_BRK,
 								QTYV: res[iRowIndex].QTYV
-
+			
 							};
 
 							if (iRowIndex === 0) {

@@ -25,6 +25,18 @@ sap.ui.define([], function () {
 			// }
 		},
 		
+		collisionIcon: function(sValue){
+			if (sValue === "X"){
+				return "sap-icon://collision";
+			}
+		},
+		
+		dangerColor: function(sValue){
+			if (sValue === "X") {
+				return "Error";
+			}
+		},
+		
 		colorval2: function (sValue) {
 			 //var oTA = this.getView().byId("table");
 			 
