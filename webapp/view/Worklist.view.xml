@@ -1,0 +1,190 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" xmlns:semantic="sap.m.semantic" xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form" controllerName="com.baba.ZDSD_UNLOAD.controller.Worklist">
+	<semantic:FullscreenPage id="page" title="Unloading App" busy="{objectView>/busy}" showNavButton="false">
+		<semantic:content>
+			<form:SimpleForm layout="ResponsiveGridLayout" editable="true" labelSpanL="1" labelSpanM="2" columnsL="2" columnsM="2">
+				<Label text="Route" required="true"/>
+				<ComboBox id="oSelect1" items="{ path: '/USERSet', sorter: { path: 'BNAME' } }" width="auto" change="onClr">
+					<core:Item key="{BNAME}" text="{BNAME} - {NAME_TEXTC}"/>
+				</ComboBox>
+				<Label text="Date" required="true"/>
+				<HBox>
+					<DatePicker id="DATE" width="auto" displayFormat="dd.MM.YYYY" valueFormat="dd.MM.YYYY" change="onClr"/>
+					<Button xmlns="sap.m" text="Get" id="button0" press="onGet" width="auto"/>
+				</HBox>
+				<ComboBox id="oSelect2" items="{ path: '/data' }" width="auto" change="onTour" busyIndicatorDelay="20000">
+					<core:Item key="{TOUR_ID}" text="{TOUR_ID} - {TOUR_DATE}"/>
+				</ComboBox>
+				<HBox>
+					<Label text="Tour:"/>
+					<Input id="TOUR" editable="false"/>
+					<Button xmlns="sap.m" text="Fetch" id="button10" press="onFet" width="auto"/>
+				</HBox>
+				<Input id="VAL" editable="false" visible="false"/>
+			</form:SimpleForm>
+			<Table id="table" width="auto"
+				items="{ path: '/data', sorter: [ { path: 'VAL', descending: false, group: true } ], operationMode: 'Client' }" noDataText="No data fetched"
+				busyIndicatorDelay="{worklistView>/tableBusyDelay}" growing="false" growingScrollToLoad="false" updateFinished="onUpdateFinished"
+				mode="MultiSelect" alternateRowColors="true">
+				<!--<headerToolbar>-->
+				<!--	<Toolbar>-->
+				<!--		<Title id="tableHeader" text="{worklistView>/worklistTableTitle}"/>-->
+				<!--		<ToolbarSpacer/>-->
+				<!--		<SearchField id="searchField" tooltip="{i18n>worklistSearchTooltip}" search="onSearchA" width="auto"/>-->
+				<!--				<Input id="search" liveChange="onSearch" width="auto"/>-->
+				<!--	</Toolbar>-->
+				<!--</headerToolbar>-->
+				<columns>
+					<Column id="nameColumn3">
+						<!--<header>-->
+						<!--<Label text="Comp." id="label3" width="50%"/>-->
+						<!--</header>-->
+					</Column>
+					<Column id="nameColumn1" vAlign="Top" minScreenWidth="Small" demandPopin="true" popinDisplay="Inline">
+						<header>
+							<Label text="Mat." id="label0"/>
+						</header>
+					</Column>
+					<Column id="nameColumn2" vAlign="Top" minScreenWidth="Small" demandPopin="true" popinDisplay="Inline">
+						<header>
+							<Label text="UOM" id="label1"/>
+						</header>
+					</Column>
+					<Column id="nameColumn4" vAlign="Top" minScreenWidth="Small" demandPopin="true" popinDisplay="Inline" visible="false">
+						<!--<header>-->
+						<!--	<Label text="EAN11" id="label4"/>-->
+						<!--</header>-->
+					</Column>
+					<Column id="nameColumn7" vAlign="Top" minScreenWidth="Small" demandPopin="true" popinDisplay="Inline" visible="false">
+						<!--<header>-->
+						<!--	<Label text="Return" id="label10"/>-->
+						<!--</header>-->
+					</Column>
+					<Column id="nameColumn5" vAlign="Top">
+						<header>
+							<Label text="Pl. QTY" id="label5"/>
+						</header>
+					</Column>
+					<Column id="nameColumn6" vAlign="Top">
+						<header>
+							<Label text="Ac. QTY" id="label6"/>
+						</header>
+					</Column>
+					<Column id="nameColumn10" vAlign="Top">
+						<header>
+							<Label text="Df. QTY" id="label10"/>
+						</header>
+					</Column>
+					<Column id="nameColumn8" vAlign="Top" minScreenWidth="Small" demandPopin="true" popinDisplay="Inline" visible="false">
+						<!--<header>-->
+						<!--	<Label text="TOUR" id="label4"/>-->
+						<!--</header>-->
+					</Column>
+					<Column id="nameColumn9" vAlign="Top" minScreenWidth="Small" demandPopin="true" popinDisplay="Inline" visible="false">
+						<!--<header>-->
+						<!--	<Label text="ITEMNR" id="label4"/>-->
+						<!--</header>-->
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<!--<CheckBox id="CHK" />-->
+							<!--<Text text="{COMP}" id="COMP" textAlign="Center"/>-->
+							<ObjectStatus id="COMP" state="{ path: 'COMP' , formatter: '.formatter.colorval' }"
+								icon="{ path: 'COMP', formatter: '.formatter.colorval1' }"/>
+							<ObjectIdentifier text="{MATNR}-{MAKTX}" id="MATNR"/>
+							<!--<ObjectStatus id="UOM" text="{UOM}" state="{ path: 'UOM', formatter: '.formatter.colorval3' }"-->
+							<!--	class="{=(${UOM}.length > 1 &amp;&amp;) ? yellow : red}" />-->
+							<!--class="{=(${UOM} === 'BOX' ) ? green : red}"-->
+							<!--class="{=(${local>/JobApplications}.length > 0 &amp;&amp; ${local>/rowSel} === 1 ) ? green : red}"/>-->
+							<!--<ObjectStatus title="Status" text="{title}" state="{= ${title} === 'Available' ? 'Success' : 'Error'}" />-->
+							<!--<ObjectStatus id="UOM" text="{UOM}"/>-->
+							<!--<ObjectStatus id="UOM" state="{ path: 'UOM' , formatter: '.formatter.colorval2' } " text="{UOM}"/>-->
+							<!--<Text text ="{path:'UOM', formatter:'.formatter.colorval2'}" class="style.css"/>-->
+							<Text id="UOM" text="{UOM}"/>
+							<Text text="{EAN11}" id="EAN11" textAlign="Center"/>
+							<Text text="{RET}" id="RET" textAlign="Center"/>
+							<Input value="{QTYD}" id="QTYD" textAlign="Right" editable="false"/>
+							<Input value="{QTYC}" id="QTYC" textAlign="Right" type="Number" change="onCal"/>
+							<Input value="{QTYV}" id="QTYV" textAlign="Right" editable="false"/>
+							<Text text="{TOUR_ID}" id="TOUR_ID" textAlign="Center"/>
+							<Text text="{ITEMNR}" id="ITEMNR" textAlign="Center"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<Table id="materialListTable" visible="false"
+				items="{ path: '/MATERIALINSet', sorter: [ { path: 'MATNR', descending: false } ], operationMode: 'Client' }" growing="false"
+				growingScrollToLoad="false">
+				<columns>
+					<Column id="dialogTableCol1"></Column>
+					<Column id="dialogTableCol2"></Column>
+					<Column id="dialogTableCol3"></Column>
+					<Column id="dialogTableCol4"></Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text id="dialogTableMATNR" text="{MATNR}" class="democlass_font"/>
+							<Text id="dialogTableMAKTX" text="{MAKTX}" class="democlass_font"/>
+							<Text id="dialogTableEAN11_BOX" text="{EAN11_BOX}" class="democlass_font"/>
+							<Text id="dialogTableEAN11_PC" text="{EAN11_PC}" class="democlass_font"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<Panel expandable="true" expanded="false" backgroundDesign="Solid" headerText="Search/Add by Material" visible="false">
+				<form:SimpleForm>
+					<!--<Label id="L4" width="100%" text="Add/New Material"></Label>-->
+					<!--<Input id="NMATNR" editable="true" width="auto"></Input>-->
+					<SearchField id="NMATNR" placeholder="Search for Material" enableSuggestions="true" search="onSearchA" suggest="onSuggestM"
+						suggestionItems="{ path: '/MATERIALINSet', sorter: { path: 'MAKTX' }, parameters: {operationMode: 'Client'}}" width="auto">
+						<suggestionItems>
+							<SuggestionItem text="{MATNR}" description="{MAKTX}" key="{MATNR}"/>
+						</suggestionItems>
+					</SearchField>
+					<!--</form:SimpleForm>-->
+					<!--<form:SimpleForm>-->
+					<HBox>
+						<RadioButton groupName="GroupA" text="BOX" selected="true" id="BOX"/>
+						<RadioButton groupName="GroupA" text="PC" id="PC"/>
+					</HBox>
+					<Button ariaLabelledBy="__xmlview0--label1" text="Add" width="80px" id="buttona" press="onAdd"/>
+					<!--<ComboBox id="oSelect2" items="{ path: '/UOMSet', sorter: { path: 'KEY' } }" width="50%">-->
+					<!--	<core:Item text="{MEINS}"/>-->
+					<!--</ComboBox>-->
+				</form:SimpleForm>
+			</Panel>
+			<CheckBox selected="false" id="CONF" text="Final Confirmation"/>
+			<form:SimpleForm>
+				<HBox>
+					<Label text="BOX:" design="Bold"/>
+					<Input id="BOXV" editable="false" textAlign="Right"/>
+					<Label text=" PC:" design="Bold"/>
+					<Input id="PCV" editable="false" textAlign="Right"/>
+					<Label text=" RET:" design="Bold"/>
+					<Input id="RETV" editable="false" textAlign="Right"/>
+				</HBox>
+			</form:SimpleForm>
+		</semantic:content>
+		<semantic:customFooterContent>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button17" press="onRest" icon="sap-icon://unlocked"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button8" press="onSer" icon="sap-icon://search"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button9" press="onRef" icon="sap-icon://refresh"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button3" press="onUnc" icon="sap-icon://activity-items"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button1" press="onSave1" icon="sap-icon://save"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button2" press="onPri" icon="sap-icon://print"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button13" press="onSearch0" icon="sap-icon://filter" text="Filter Zero Qty"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button19" press="onSearchN" icon="sap-icon://filter" text="Filter New Item"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button12" press="onAddS" icon="sap-icon://add-product"
+				text="Add Material(by Description)"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button4" press="onAddByEAN" icon="sap-icon://add-product" text="Add Material by EAN"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button15" press="onAddDes" icon="sap-icon://detail-view"
+				text="Search Material(by Description)"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button20" press="onAll" icon="sap-icon://decrease-line-height"
+				text="Show All items"/>
+		</semantic:customFooterContent>
+	</semantic:FullscreenPage>
+	<!--</Page>-->
+</mvc:View>

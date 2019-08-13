@@ -1,0 +1,78 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="ZDSDO_UNLOAD_SRV" xml:lang="en" sap:schema-version="1">
+			<EntityType Name="TOUR" sap:content-version="1">
+				<Key><PropertyRef Name="KUNNR"/><PropertyRef Name="PREVDAT"/></Key><Property Name="TOUR_ID" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="Tour" sap:sortable="false"/><Property Name="TOUR_DATE" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/><Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:sortable="false"/><Property Name="PREVDAT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:sortable="false"/></EntityType>
+			<EntityType Name="USER" sap:content-version="1">
+				<Key><PropertyRef Name="BNAME"/></Key><Property Name="BNAME" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:label="Branching name" sap:sortable="false"/><Property Name="NAME_TEXTC" Type="Edm.String" Nullable="false" MaxLength="80" sap:unicode="false" sap:label="Complete name"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/></EntityType>
+			<EntityType Name="INPUT" sap:content-version="1">
+				<Key><PropertyRef Name="KUNNR"/><PropertyRef Name="UNCONF"/><PropertyRef Name="PREVDAT"/><PropertyRef Name="TOUR_ID"/></Key><Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Customer" sap:sortable="false"/><Property Name="QTYV" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:unit="UOM"
+					sap:label="Target Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="UNCONF" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Single-Character Flag"
+					sap:sortable="false"/><Property Name="PREVDAT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Character Field Length = 10"
+					sap:sortable="false"/><Property Name="TOUR_ID" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="Tour" sap:sortable="false"/><Property Name="ITEMNR" Type="Edm.String" Nullable="false" MaxLength="6" sap:unicode="false" sap:label="CoCis Item" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="MATNR" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Material" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="MAKTX" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Description" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="UOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Check UoM" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/><Property Name="QTYD" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:unit="UOM"
+					sap:label="Target Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="QTYC" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:unit="UOM"
+					sap:label="Actual Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="RET" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Single-Character Flag"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="EAN11" Type="Edm.String" Nullable="false" MaxLength="18" sap:unicode="false" sap:label="EAN/UPC" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="COMP" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Single-Character Flag"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="VAL" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false"
+					sap:label="Not More Closely Defined Area, Possibly Used for Patchlevels" sap:creatable="false" sap:updatable="false" sap:sortable="false"/></EntityType>
+			<EntityType Name="HEADER" sap:content-version="1">
+				<Key><PropertyRef Name="TOUR_ID"/></Key><Property Name="TOUR_ID" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="Tour" sap:sortable="false"/><Property Name="CONF" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Single-Character Flag"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="ROUTE" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Customer" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="VAL" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Single-Character Flag"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><NavigationProperty Name="HEADITEMNAV" Relationship="ZDSDO_UNLOAD_SRV.HEADITEMASS" FromRole="FromRole_HEADITEMASS"
+					ToRole="ToRole_HEADITEMASS"/></EntityType>
+			<EntityType Name="ITEM" sap:content-version="1">
+				<Key><PropertyRef Name="TOUR_ID"/><PropertyRef Name="ITEMNR"/></Key><Property Name="TOUR_ID" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="Tour" sap:sortable="false"/><Property Name="ITEMNR" Type="Edm.String" Nullable="false" MaxLength="6" sap:unicode="false" sap:label="CoCis Item" sap:sortable="false"/><Property Name="MATNR" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Material" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="QUAN_PLAN" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:unit="UOM"
+					sap:label="Target Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="QUAN_COUNT" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:unit="UOM"
+					sap:label="Actual Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="UOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Check UoM" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/><Property Name="SPEC_RETURN" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Ctrl Parameters"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="STATUS" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Single-Character Flag"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/></EntityType>
+			<EntityType Name="PRINT" m:HasStream="true" sap:content-version="1">
+				<Key><PropertyRef Name="TOUR_ID"/></Key><Property Name="MIMETYPE" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="Character 100"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="TOUR_ID" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="Tour" sap:sortable="false"/><Property Name="CONTENT" Type="Edm.Binary" Nullable="false" sap:unicode="false" sap:label="PDF" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/></EntityType>
+			<EntityType Name="MATERIALIN" sap:content-version="1">
+				<Key><PropertyRef Name="MATNR"/></Key><Property Name="MATNR" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Material" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="MAKTX" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Description" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="EAN11_BOX" Type="Edm.String" Nullable="false" MaxLength="18" sap:unicode="false" sap:label="Barcode for BOX"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="EAN11_PC" Type="Edm.String" Nullable="false" MaxLength="18" sap:unicode="false" sap:label="Barcode for PC"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/></EntityType>
+			<EntityType Name="UOM" sap:content-version="1">
+				<Key><PropertyRef Name="KEY"/></Key><Property Name="KEY" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:sortable="false"/><Property Name="MEINS" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Base Unit" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/></EntityType>
+			<EntityType Name="MATERIALGET" sap:content-version="1">
+				<Key><PropertyRef Name="TOUR_ID"/><PropertyRef Name="MATNR"/><PropertyRef Name="UOM"/></Key><Property Name="TOUR_ID" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="Tour" sap:sortable="false"/><Property Name="ITEMNR" Type="Edm.String" Nullable="false" MaxLength="6" sap:unicode="false" sap:label="CoCis Item" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="MATNR" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Material" sap:sortable="false"/><Property Name="MAKTX" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Description" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="UOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Check UoM" sap:sortable="false"
+					sap:semantics="unit-of-measure"/><Property Name="QTYD" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:unit="UOM"
+					sap:label="Target Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="QTYC" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:unit="UOM"
+					sap:label="Actual Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="EAN11" Type="Edm.String" Nullable="false" MaxLength="18" sap:unicode="false" sap:label="EAN/UPC" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false"/><Property Name="VAL" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false"
+					sap:label="Not More Closely Defined Area, Possibly Used for Patchlevels" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false"/><Property Name="QTYV" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" sap:unicode="false" sap:unit="UOM"
+					sap:label="Target Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/></EntityType>
+			<Association Name="HEADITEMASS" sap:content-version="1"><End Type="ZDSDO_UNLOAD_SRV.HEADER" Multiplicity="1" Role="FromRole_HEADITEMASS"/><End Type="ZDSDO_UNLOAD_SRV.ITEM" Multiplicity="*" Role="ToRole_HEADITEMASS"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_HEADITEMASS"><PropertyRef Name="TOUR_ID"/></Principal>
+					<Dependent Role="ToRole_HEADITEMASS"><PropertyRef Name="TOUR_ID"/></Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="ZDSDO_UNLOAD_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx"><EntitySet Name="TOURSet" EntityType="ZDSDO_UNLOAD_SRV.TOUR" sap:creatable="false" sap:updatable="false" sap:deletable="false"
+				sap:pageable="false" sap:addressable="false" sap:content-version="1"/><EntitySet Name="USERSet" EntityType="ZDSDO_UNLOAD_SRV.USER" sap:searchable="true" sap:content-version="1"/><EntitySet Name="INPUTSet" EntityType="ZDSDO_UNLOAD_SRV.INPUT" sap:searchable="true" sap:content-version="1"/><EntitySet Name="HEADERSet" EntityType="ZDSDO_UNLOAD_SRV.HEADER" sap:searchable="true" sap:content-version="1"/><EntitySet Name="ITEMSet" EntityType="ZDSDO_UNLOAD_SRV.ITEM" sap:searchable="true" sap:content-version="1"/><EntitySet Name="PRINTSet" EntityType="ZDSDO_UNLOAD_SRV.PRINT" sap:searchable="true" sap:content-version="1"/><EntitySet Name="MATERIALINSet" EntityType="ZDSDO_UNLOAD_SRV.MATERIALIN" sap:searchable="true" sap:content-version="1"/><EntitySet Name="UOMSet" EntityType="ZDSDO_UNLOAD_SRV.UOM" sap:searchable="true" sap:content-version="1"/><EntitySet Name="MATERIALGETSet" EntityType="ZDSDO_UNLOAD_SRV.MATERIALGET" sap:creatable="false" sap:updatable="false" sap:deletable="false"
+				sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+				<AssociationSet Name="HEADITEMASSSet" Association="ZDSDO_UNLOAD_SRV.HEADITEMASS" sap:creatable="false" sap:updatable="false"
+					sap:deletable="false" sap:content-version="1"><End EntitySet="HEADERSet" Role="FromRole_HEADITEMASS"/><End EntitySet="ITEMSet" Role="ToRole_HEADITEMASS"/></AssociationSet>
+			</EntityContainer><atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="http://172.17.80.40:8000/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/$metadata"/><atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version"
+				href="http://172.17.80.40:8000/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/$metadata"/></Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
