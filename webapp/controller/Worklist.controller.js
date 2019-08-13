@@ -217,9 +217,9 @@ sap.ui.define([
 				var matListItems = matListTable.getItems();
 
 				for (var iRowIndex = 0; iRowIndex < matListItems.length; iRowIndex++) {
-					var maktx = matListItems[iRowIndex].getCells()[1].getText();
-					var ean11Box = matListItems[iRowIndex].getCells()[2].getText();
-					var ean11Pc = matListItems[iRowIndex].getCells()[3].getText();
+					var maktx = matListItems[iRowIndex].getCells()[2].getText();
+					var ean11Box = matListItems[iRowIndex].getCells()[3].getText();
+					var ean11Pc = matListItems[iRowIndex].getCells()[4].getText();
 
 					if (ean11Input === ean11Box || ean11Input === ean11Pc) {
 						that.getView().byId("EDES").setValue(maktx);
@@ -413,13 +413,13 @@ sap.ui.define([
 				var aCells = oRow.getCells();
 				// for (var i = 7; i < aCells.length; i++) {
 				//var colVal_top = Number(parseInt(aCells[i].getValue()));
-				var colVal_qtyc = aCells[6]._lastValue;
+				var colVal_qtyc = aCells[7]._lastValue;
 
 				if (Number(colVal_qtyc) < 0) {
 					colVal_qtyc = "0";
 				}
-				var colVal_qtyd = aCells[5]._lastValue;
-				var colVal_qtyv = aCells[7]._lastValue;
+				var colVal_qtyd = aCells[6]._lastValue;
+				var colVal_qtyv = aCells[8]._lastValue;
 				colVal_qtyd = Number(colVal_qtyd);
 
 				if (colVal_qtyc === "" || colVal_qtyc === "0" || colVal_qtyc === "0.000") {
@@ -437,14 +437,14 @@ sap.ui.define([
 
 				var diff = Number(colVal_tar0) - colVal_qtyd; //count - plan
 
-				var ret = aCells[4].getText();
+				var ret = aCells[3].getText();
 				if (ret === "2") {
 					diff = 0;
-					aCells[5].setValue(colVal_tar0);
+					aCells[6].setValue(colVal_tar0);
 				}
-				
-				aCells[6].setValue(colVal_tar0);
-				aCells[7].setValue(diff);
+
+				aCells[7].setValue(colVal_tar0);
+				aCells[8].setValue(diff);
 
 				this.onUpdateFinished();
 				// }
@@ -690,7 +690,7 @@ sap.ui.define([
 								VAL: res[iRowIndex].VAL,
 								IS_BRK: res[iRowIndex].IS_BRK,
 								QTYV: res[iRowIndex].QTYV
-			
+
 							};
 
 							if (iRowIndex === 0) {
@@ -752,7 +752,7 @@ sap.ui.define([
 						// if (l_matnr !== "" && l_matnr !== undefined && l_matnr !=== null ) {
 						var l_comp = oModel.getProperty("COMP", aItems[iRowIndex].getBindingContext());
 						if (l_comp === "X") {
-							aItems[iRowIndex].getCells()[6].setEditable(false);
+							aItems[iRowIndex].getCells()[7].setEditable(false);
 						}
 					}
 				}
@@ -768,7 +768,7 @@ sap.ui.define([
 
 				for (var iRowIndex = 0; iRowIndex < aItems.length; iRowIndex++) {
 					if (aItems[iRowIndex]._bGroupHeader === false) {
-						aItems[iRowIndex].getCells()[6].setEditable(true);
+						aItems[iRowIndex].getCells()[7].setEditable(true);
 						// aItems[iRowIndex].getCells()[0].setIcon();
 						// aItems[iRowIndex].getCells()[0].setText();
 
