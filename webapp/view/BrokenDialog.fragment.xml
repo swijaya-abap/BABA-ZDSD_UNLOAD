@@ -1,0 +1,23 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog id="BrokenDialog" resizable="false" contentWidth="auto" draggable="true" afterOpen="onOpenBrokenDialog">
+		<FlexBox alignItems="Start">
+			<items>
+				<ComboBox id="brokenMaterialCBox" items="{ path: '/data' }" busyIndicatorDelay="20000" width="300px" placeholder="Select Material">
+					<core:Item key="{MATNR}" text="{MATNR} - {MAKTX}"/>
+					<layoutData>
+						<FlexItemData growFactor="1"/>
+					</layoutData>
+				</ComboBox>
+			</items>
+		</FlexBox>
+		<Label text="Quantity" /> 
+		<Input id="FETV" type="Number" />
+			
+		<beginButton>
+			<Button id="F" text="Fetch" press="onOkBrokenDialog"/>
+		</beginButton>
+		<endButton>
+			<Button text="Cancel" press="onCloseBrokenDialog"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

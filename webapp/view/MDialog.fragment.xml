@@ -1,0 +1,24 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog id="MDialog" resizable="false" contentWidth="auto" draggable="true">
+		<SearchField id="searchField" width="auto" placeholder="search for..." enableSuggestions="true" search="onSearchA" suggest="onSuggestM"
+			suggestionItems="{ path: '/MATERIALINSet', sorter: { path: 'MAKTX' }, parameters: {operationMode: 'Client'}}">
+			<suggestionItems>
+				<!--<SuggestionItem text="{MATNR}-{MAKTX}" description="{MAKTX}" key="{MATNR}"/>-->
+				<SuggestionItem text="{MATNR} - {MAKTX}" key="{MATNR}"/>
+			</suggestionItems>
+		</SearchField>
+		
+		<HBox>
+			<RadioButton groupName="GroupA" text="BOX" selected="true" id="BOXD"/>
+			<RadioButton groupName="GroupA" text="PC" id="PCD"/>
+		</HBox>
+		<Label text="Quantity"/>
+		<Input id="FETV" type="Number" change="onDchk"/>
+		<beginButton>
+			<Button text="Fetch" press="onAddMD"/>
+		</beginButton>
+		<endButton>
+			<Button text="Cancel" press="onMCloseDialog"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
