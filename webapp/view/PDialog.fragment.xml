@@ -5,6 +5,7 @@
 			<RadioButton groupName="GroupA" text="BOX" id="BOXA"/>
 			<RadioButton groupName="GroupA" text="PC" id="PCA"/>
 			<RadioButton groupName="GroupA" text="RET" id="RETA"/>
+			<RadioButton groupName="GroupA" text="TRA" id="TRAA" class="sapUiSmallMarginEnd"/>
 		</HBox>
 		
 		<beginButton>

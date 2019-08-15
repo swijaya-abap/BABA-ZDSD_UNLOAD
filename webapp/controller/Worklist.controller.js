@@ -110,8 +110,10 @@ sap.ui.define([
 						var oModel = new JSONModel();
 						oModel.setData({
 							matnr: itemObj.MATNR,
-							maktx: itemObj.MAKTX
+							maktx: itemObj.MAKTX,
+							qty: "0"
 						});
+						this.obdSelectedObject = itemObj;
 						this.getView().setModel(oModel, "OpenBoxDialog");
 						message = "";
 					}
@@ -120,11 +122,10 @@ sap.ui.define([
 
 			return message;
 		},
-		
-		onObdQtyLiveChange: function(oEvent) {
-			var num_regex = /^[0-9]+$/;
+
+		onObdQtyLiveChange: function (oEvent) {
 			var value = oEvent.getParameter("value");
-			if(value !== ""){
+			if (value !== "") {
 				if (value < 0) value = value * -1;
 				value = Math.floor(value);
 				if (!isNaN(value)) this.byId("ObdQty").setValue(value);
@@ -132,7 +133,107 @@ sap.ui.define([
 		},
 
 		onObdOk: function () {
+			var qty = this.byId("ObdQty").getValue();
+			if (qty === "" || qty === "0") {
+				sap.m.MessageToast.show("Please provide quantity");
+			} else if (Number(this.obdSelectedObject.QTYV) === 0 && Number(qty) > Number(this.obdSelectedObject.QTYC)) {
+				sap.m.MessageToast.show("Transferring more than Actual Qty is not allowed");
+			} else if (Number(this.obdSelectedObject.QTYV) > 0 && Number(qty) > Number(this.obdSelectedObject.QTYD)) {
+				sap.m.MessageToast.show("In case of Goods More, Transferring more than Plan Qty is not allowed");
+			} else if (Number(this.obdSelectedObject.QTYV) < 0 && Number(qty) > Number(this.obdSelectedObject.QTYC)) {
+				sap.m.MessageToast.show("In case of Goods Less, Transferring more than Actual Qty is not allowed");
+			} else {
+				var that = this;
+				
+				var oBusy = new sap.m.BusyDialog();
+				this.onBusyS(oBusy);
+				
+				var oTable = this.getView().byId("table");
+				var oModel2 = oTable.getModel();
+				var aTableSearchState = [];
+				this._applySearch(aTableSearchState);
+				var aContexts = oTable.getItems();
+				var itemData = [];
 
+				var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/", true);
+				oModel1.read("/OPENBOXSet(TOUR_ID='" + this.obdSelectedObject.TOUR_ID + "',MATNR='" + this.obdSelectedObject.MATNR + "',QTYC=" +
+					qty + ")", {
+						success: function (oData, oResponse) {
+							var res = {};
+							res = oData;
+
+							if (res !== "") {
+								for (var i = 0; i < aContexts.length; i++) {
+									if (aContexts[i]._bGroupHeader === false) {
+										var pro = aContexts[i];
+
+										var l_matnr = oModel2.getProperty("MATNR", aContexts[i].getBindingContext());
+										var l_uom = oModel2.getProperty("UOM", aContexts[i].getBindingContext());
+										var l_ret = oModel2.getProperty("RET", aContexts[i].getBindingContext());
+
+										var itemRow = {
+											COMP: oModel2.getProperty("COMP", aContexts[i].getBindingContext()),
+											RET: oModel2.getProperty("RET", aContexts[i].getBindingContext()),
+											MATNR: oModel2.getProperty("MATNR", aContexts[i].getBindingContext()),
+											MATNR: oModel2.getProperty("MATNR", aContexts[i].getBindingContext()),
+											MATNR: oModel2.getProperty("MATNR", aContexts[i].getBindingContext()),
+											MAKTX: oModel2.getProperty("MAKTX", aContexts[i].getBindingContext()),
+											UOM: oModel2.getProperty("UOM", aContexts[i].getBindingContext()),
+											QTYD: oModel2.getProperty("QTYD", aContexts[i].getBindingContext()),
+											QTYC: oModel2.getProperty("QTYC", aContexts[i].getBindingContext()),
+											TOUR_ID: oModel2.getProperty("TOUR_ID", aContexts[i].getBindingContext()),
+											ITEMNR: oModel2.getProperty("ITEMNR", aContexts[i].getBindingContext()),
+											EAN11: oModel2.getProperty("EAN11", aContexts[i].getBindingContext()),
+											VAL: oModel2.getProperty("VAL", aContexts[i].getBindingContext()),
+											QTYV: oModel2.getProperty("QTYV", aContexts[i].getBindingContext())
+										};
+
+										// Material in BOX
+										if (l_ret === "" && l_matnr === that.obdSelectedObject.MATNR && l_uom === that.obdSelectedObject.UOM) {
+											itemRow.QTYD = that.obdSelectedObject.QTYD - qty;
+											itemRow.QTYC = that.obdSelectedObject.QTYC - qty;
+										}
+										// Material in PC
+										else if (l_ret === "" && l_matnr === that.obdSelectedObject.MATNR && l_uom === res.UOM) {
+											itemRow.MATNR = res.MATNR;
+											itemRow.MAKTX = res.MAKTX;
+											itemRow.UOM = res.UOM;
+											itemRow.QTYD = res.QTYD;
+											itemRow.QTYC = res.QTYC;
+											itemRow.ITEMNR = res.ITEMNR;
+											itemRow.EAN11 = res.EAN11;
+											itemRow.VAL = res.VAL;
+											
+											// Check if user changed the actual quantity that cause variance
+											if (res.QTYV !== itemRow.QTYV){
+												itemRow.QTYC = String(Number(itemRow.QTYC) + ( Number(itemRow.QTYV) - Number(res.QTYV) ));
+											}
+										}
+										itemData.push(itemRow);
+									}
+
+								}
+
+								oModel2.setData({
+									data: itemData
+								});
+
+								oTable.removeSelections(true);
+								oModel2.refresh(true);
+							}
+							sap.m.MessageToast.show(qty + " BOX have been successfully transferred to PC");
+							that.onBusyE(oBusy);
+						},
+						error: function (oResponse) {
+							that.onBusyE(oBusy);
+							var oMsg = JSON.parse(oResponse.responseText);
+							jQuery.sap.require("sap.m.MessageBox");
+							sap.m.MessageToast.show(oMsg.error.message.value);
+							that.byId("Dialog").destroy();
+						}
+					});
+				this.byId("OpenBoxDialog").destroy();
+			}
 		},
 
 		onObdCancel: function () {
@@ -464,27 +565,39 @@ sap.ui.define([
 				}
 				var colVal_qtyd = aCells[5]._lastValue;
 				var colVal_qtyv = aCells[7]._lastValue;
-				colVal_qtyd = Number(colVal_qtyd);
 
-				if (colVal_qtyc === "" || colVal_qtyc === "0" || colVal_qtyc === "0.000") {
-					var colVal_tar0 = "0";
-					//colVal_tar0 = parseInt(colVal_tar0);
-					colVal_tar0 = Number(colVal_tar0);
+				// Begin of Version 3
+				var l_ret = aCells[4].getProperty("text");
+				if (l_ret === "1" && Number(colVal_qtyc) > Number(colVal_qtyd)) {
+					sap.m.MessageBox.error("Goods More is not allowed for Return Items");
+					colVal_qtyc = Number(colVal_qtyd) + Number(colVal_qtyv)
+					aCells[6].setValue(colVal_qtyc);
 				} else {
-					var input1 = colVal_qtyc.split(".");
-					var input = input1[0];
+					// End of Version 3
 
-					var convval = Number(input).toFixed(NUM_DECIMAL_PLACES);
-					colVal_tar0 = Number(convval);
-					// colVal_tar0 = Number(colVal_qtyc).toFixed(NUM_DECIMAL_PLACES);
+					colVal_qtyd = Number(colVal_qtyd);
+
+					if (colVal_qtyc === "" || colVal_qtyc === "0" || colVal_qtyc === "0.000") {
+						var colVal_tar0 = "0";
+						//colVal_tar0 = parseInt(colVal_tar0);
+						colVal_tar0 = Number(colVal_tar0);
+					} else {
+						var input1 = colVal_qtyc.split(".");
+						var input = input1[0];
+
+						var convval = Number(input).toFixed(NUM_DECIMAL_PLACES);
+						colVal_tar0 = Number(convval);
+						// colVal_tar0 = Number(colVal_qtyc).toFixed(NUM_DECIMAL_PLACES);
+					}
+
+					var diff = Number(colVal_tar0) - colVal_qtyd; //count - plan
+
+					aCells[6].setValue(colVal_tar0);
+					aCells[7].setValue(diff);
+
+					this.onUpdateFinished();
+
 				}
-
-				var diff = Number(colVal_tar0) - colVal_qtyd; //count - plan
-
-				aCells[6].setValue(colVal_tar0);
-				aCells[7].setValue(diff);
-
-				this.onUpdateFinished();
 				// }
 			}
 		},
@@ -573,6 +686,7 @@ sap.ui.define([
 			var boxa = that.getView().byId("BOXA").getSelected();
 			var pca = that.getView().byId("PCA").getSelected();
 			var reta = that.getView().byId("RETA").getSelected();
+			var traa = that.getView().byId("TRAA").getSelected();
 
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
 			var date = that.getView().byId("DATE").getValue();
@@ -587,6 +701,8 @@ sap.ui.define([
 				val = "P";
 			} else if (reta === true) {
 				val = "R";
+			} else if (traa === true) {
+				val = "T";
 			}
 			that.onGetM(kunnr, date, uncnf, oModel, val);
 
@@ -635,6 +751,7 @@ sap.ui.define([
 			var boxa = that.getView().byId("BOXAA").getSelected();
 			var pca = that.getView().byId("PCAA").getSelected();
 			var reta = that.getView().byId("RETAA").getSelected();
+			var brka = that.getView().byId("BRKAA").getSelected();
 
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
 			var date = that.getView().byId("DATE").getValue();
@@ -649,6 +766,8 @@ sap.ui.define([
 				val = "P";
 			} else if (reta === true) {
 				val = "R";
+			} else if (brka === true) {
+				val = "T";
 			}
 			that.onGetM(kunnr, date, uncnf, oModel, val);
 			that.byId("ADialog").destroy();
@@ -938,15 +1057,21 @@ sap.ui.define([
 					for (var iRowIndex = 0; iRowIndex < aItems.length; iRowIndex++) {
 						//var l_chk = oModel.getProperty("CHK", aItems[iRowIndex].getBindingContext());	
 						var l_matnr = oModel.getProperty("MATNR", aItems[iRowIndex].getBindingContext());
-						var l_uom = oModel.getProperty("UOM", aItems[iRowIndex].getBindingContext());
-						var l_tourid = oModel.getProperty("TOUR_ID", aItems[iRowIndex].getBindingContext());
-						var l_itemnr = oModel.getProperty("ITEMNR", aItems[iRowIndex].getBindingContext());
-						var l_qtyd = oModel.getProperty("QTYD", aItems[iRowIndex].getBindingContext());
-						var l_qtyc = oModel.getProperty("QTYC", aItems[iRowIndex].getBindingContext());
-						var l_ret = oModel.getProperty("RET", aItems[iRowIndex].getBindingContext());
-						var l_chk = oModel.getProperty("COMP", aItems[iRowIndex].getBindingContext());
-
 						if (l_matnr !== "" && l_matnr !== null) {
+							var l_uom = oModel.getProperty("UOM", aItems[iRowIndex].getBindingContext());
+							var l_tourid = oModel.getProperty("TOUR_ID", aItems[iRowIndex].getBindingContext());
+							var l_itemnr = oModel.getProperty("ITEMNR", aItems[iRowIndex].getBindingContext());
+							var l_qtyd = oModel.getProperty("QTYD", aItems[iRowIndex].getBindingContext());
+							var l_qtyc = oModel.getProperty("QTYC", aItems[iRowIndex].getBindingContext());
+							var l_ret = oModel.getProperty("RET", aItems[iRowIndex].getBindingContext());
+							var l_chk = oModel.getProperty("COMP", aItems[iRowIndex].getBindingContext());
+							// Begin of Version 3
+							var l_val = oModel.getProperty("VAL", aItems[iRowIndex].getBindingContext());
+							var l_chgReas = l_val.substring(4, 6);
+							if (l_chgReas !== "R1" && l_chgReas !== "R2" && l_chgReas !== "R3" && l_chgReas !== "R4" && l_chgReas !== "R5") {
+								l_chgReas = "";
+							}
+							// End of Version 3
 							// var chk = aItems[iRowIndex].getCells()[0].getSelected();
 							// if (chk === true) {
 							// 	var l_mark = "X";
@@ -964,9 +1089,12 @@ sap.ui.define([
 								ITEMNR: l_itemnr,
 								MATNR: l_matnr,
 								UOM: l_uom,
-								QUAN_PLAN: l_qtyd,
-								QUAN_COUNT: l_qtyc,
+								QUAN_PLAN: String(l_qtyd),
+								QUAN_COUNT: String(l_qtyc),
 								SPEC_RETURN: l_ret,
+								// Begin of Version 3
+								CHG_REAS: l_chgReas,
+								// End of Version 3
 								STATUS: l_chk
 							});
 						}

@@ -3,7 +3,7 @@
 		<Input id="ObdMaterial" value="{OpenBoxDialog>/matnr}" editable="false"/>
 		<Input id="ObdDescription" value="{OpenBoxDialog>/maktx}" editable="false"/>
 		<Label text="Quantity"/>
-		<Input id="ObdQty" type="Number" liveChange="onObdQtyLiveChange"/>
+		<Input id="ObdQty" value="{OpenBoxDialog>/qty}" type="Number" liveChange="onObdQtyLiveChange"/>
 		<beginButton>
 			<Button id="ObdOk" text="OK" press="onObdOk"/>
 		</beginButton>
