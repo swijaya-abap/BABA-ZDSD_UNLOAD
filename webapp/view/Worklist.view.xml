@@ -187,6 +187,8 @@
 				text="Show All items"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="btnOpenBox" press="onOpenBox" icon="sap-icon://duplicate"
 				text="Open Box"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="btnChgRetReas" press="onChgRetReas" icon="sap-icon://edit-outside"
+				text="Change Return Reason" type="Transparent"/>
 		</semantic:customFooterContent>
 	</semantic:FullscreenPage>
 	<!--</Page>-->
