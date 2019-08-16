@@ -221,15 +221,16 @@ sap.ui.define([
 										itemRow.QTYC = String(Number(that.crdSelectedObject.QTYC) - Number(qty));
 									}
 									// Target to return
-									else if (l_ret === "1" && l_matnr === that.crdSelectedObject.MATNR && l_val === that.crdSelectedObject.CHG_REASON_TO) {
-										itemRow.MATNR = res.MATNR;
-										itemRow.MAKTX = res.MAKTX;
-										itemRow.UOM = res.UOM;
+									else if ( (l_ret === "1" && l_matnr === that.crdSelectedObject.MATNR && l_val === that.crdSelectedObject.CHG_REASON_TO) ||
+											  (l_ret === "" && l_matnr === that.crdSelectedObject.MATNR && that.crdSelectedObject.CHG_REASON_TO === "GS")) {
+										// itemRow.MATNR = res.MATNR;
+										// itemRow.MAKTX = res.MAKTX;
+										// itemRow.UOM = res.UOM;
 										itemRow.QTYD = String(Number(itemRow.QTYD) + Number(qty));
 										itemRow.QTYC = String(Number(itemRow.QTYC) + Number(qty));
-										itemRow.ITEMNR = res.ITEMNR;
-										itemRow.EAN11 = res.EAN11;
-										itemRow.VAL = res.VAL;
+										// itemRow.ITEMNR = res.ITEMNR;
+										// itemRow.EAN11 = res.EAN11;
+										// itemRow.VAL = res.VAL;
 										
 										var l_existingFound = true;
 									}
