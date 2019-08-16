@@ -112,7 +112,7 @@ sap.ui.define([
 								crdChgReas: itemData
 							});
 							that.getView().setModel(oModel, "Crd");
-							that._openDialog("ChgReasDialog");
+							that._openDialog("ChgReasDialog", "Change Return Reason");
 						}
 						that.onBusyE(oBusy);
 					},
@@ -230,11 +230,6 @@ sap.ui.define([
 										itemRow.ITEMNR = res.ITEMNR;
 										itemRow.EAN11 = res.EAN11;
 										itemRow.VAL = res.VAL;
-
-										// Check if user changed the actual quantity that cause variance
-										if (res.QTYV !== itemRow.QTYV) {
-											itemRow.QTYC = String(Number(itemRow.QTYC) + (Number(itemRow.QTYV) - Number(res.QTYV)));
-										}
 										
 										var l_existingFound = true;
 									}
@@ -287,7 +282,7 @@ sap.ui.define([
 			if (message !== "") {
 				sap.m.MessageToast.show(message);
 			} else {
-				this._openDialog("OpenBoxDialog");
+				this._openDialog("OpenBoxDialog", "Open Box");
 			}
 		},
 
@@ -381,7 +376,6 @@ sap.ui.define([
 									var l_matnr = oModel2.getProperty("MATNR", aContexts[i].getBindingContext());
 									var l_uom = oModel2.getProperty("UOM", aContexts[i].getBindingContext());
 									var l_ret = oModel2.getProperty("RET", aContexts[i].getBindingContext());
-
 									var itemRow = {
 										COMP: oModel2.getProperty("COMP", aContexts[i].getBindingContext()),
 										RET: oModel2.getProperty("RET", aContexts[i].getBindingContext()),
@@ -406,13 +400,11 @@ sap.ui.define([
 										itemRow.MATNR = res.MATNR;
 										itemRow.MAKTX = res.MAKTX;
 										itemRow.UOM = res.UOM;
-										itemRow.QTYD = res.QTYD;
-										itemRow.QTYC = res.QTYC;
 										itemRow.ITEMNR = res.ITEMNR;
 										itemRow.EAN11 = res.EAN11;
 										itemRow.VAL = res.VAL;
-										itemRow.QTYD = String(Number(itemRow.QTYD) + Number(qty));
-										itemRow.QTYC = String(Number(itemRow.QTYC) + Number(qty));
+										itemRow.QTYD = String(Number(itemRow.QTYD) + Number(res.CONV_QTY));
+										itemRow.QTYC = String(Number(itemRow.QTYC) + Number(res.CONV_QTY));
 
 										// Check if user changed the actual quantity that cause variance
 										if (res.QTYV !== itemRow.QTYV) {
@@ -431,8 +423,8 @@ sap.ui.define([
 									MATNR: res.MATNR,
 									MAKTX: res.MAKTX,
 									UOM: res.UOM,
-									QTYD: res.QTYD,
-									QTYC: res.QTYC,
+									QTYD: String(Number(res.QTYD) + Number(res.CONV_QTY)),
+									QTYC: String(Number(res.QTYC) + Number(res.CONV_QTY)),
 									TOUR_ID: res.TOUR_ID,
 									ITEMNR: res.ITEMNR,
 									EAN11: res.EAN11,

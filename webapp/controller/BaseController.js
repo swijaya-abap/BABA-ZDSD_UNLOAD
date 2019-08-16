@@ -43,7 +43,7 @@ sap.ui.define([
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
 
-		_openDialog: function (iDialogName) {
+		_openDialog: function (iDialogName, iTitle) {
 			var oView = this.getView();
 			var oDialog = this.byId(iDialogName);
 			// create dialog lazily
@@ -51,7 +51,7 @@ sap.ui.define([
 				oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V3.view." + iDialogName, this);
 				oView.addDependent(oDialog);
 			}
-			oDialog.setTitle("Search All Items");
+			oDialog.setTitle(iTitle);
 			oDialog.open();
 		},
 
