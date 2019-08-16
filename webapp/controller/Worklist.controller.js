@@ -217,21 +217,16 @@ sap.ui.define([
 									};
 									// Source from return
 									if (l_ret === "1" && l_matnr === that.crdSelectedObject.MATNR && l_val === that.crdSelectedObject.CHG_REASON_FROM) {
-										itemRow.QTYD = that.crdSelectedObject.QTYD - qty;
-										itemRow.QTYC = that.crdSelectedObject.QTYC - qty;
+										itemRow.QTYD = String(Number(that.crdSelectedObject.QTYD) - Number(qty));
+										itemRow.QTYC = String(Number(that.crdSelectedObject.QTYC) - Number(qty));
 									}
 									// Target to return
 									else if (l_ret === "1" && l_matnr === that.crdSelectedObject.MATNR && l_val === that.crdSelectedObject.CHG_REASON_TO) {
 										itemRow.MATNR = res.MATNR;
 										itemRow.MAKTX = res.MAKTX;
 										itemRow.UOM = res.UOM;
-										if (res.IS_BACKEND === "X"){
-											itemRow.QTYD = res.QTYD;
-											itemRow.QTYC = res.QTYC;
-										} else {
-											itemRow.QTYD = String(Number(itemRow.QTYD) + Number(res.QTYD));
-											itemRow.QTYC = String(Number(itemRow.QTYC) + Number(res.QTYC));
-										}
+										itemRow.QTYD = String(Number(itemRow.QTYD) + Number(qty));
+										itemRow.QTYC = String(Number(itemRow.QTYC) + Number(qty));
 										itemRow.ITEMNR = res.ITEMNR;
 										itemRow.EAN11 = res.EAN11;
 										itemRow.VAL = res.VAL;
@@ -416,14 +411,8 @@ sap.ui.define([
 										itemRow.ITEMNR = res.ITEMNR;
 										itemRow.EAN11 = res.EAN11;
 										itemRow.VAL = res.VAL;
-										
-										if (res.IS_BACKEND === "X"){
-											itemRow.QTYD = res.QTYD;
-											itemRow.QTYC = res.QTYC;
-										} else {
-											itemRow.QTYD = String(Number(itemRow.QTYD) + Number(res.QTYD));
-											itemRow.QTYC = String(Number(itemRow.QTYC) + Number(res.QTYC));
-										}
+										itemRow.QTYD = String(Number(itemRow.QTYD) + Number(qty));
+										itemRow.QTYC = String(Number(itemRow.QTYC) + Number(qty));
 
 										// Check if user changed the actual quantity that cause variance
 										if (res.QTYV !== itemRow.QTYV) {
