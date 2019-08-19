@@ -189,6 +189,8 @@
 				text="Open Box"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="btnChgRetReas" press="onChgRetReas" icon="sap-icon://edit-outside"
 				text="Change Return Reason"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="btnDamage" press="onDamage" icon="sap-icon://collision"
+				text="Damage in Transit"/>
 		</semantic:customFooterContent>
 	</semantic:FullscreenPage>
 	<!--</Page>-->

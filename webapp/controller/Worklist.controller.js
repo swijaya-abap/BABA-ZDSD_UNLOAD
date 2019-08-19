@@ -80,6 +80,225 @@ sap.ui.define([
 			oBusy.close();
 		},
 
+		/* =========================================================== */
+		/* End of Damage in Transit									   */
+		/* =========================================================== */
+		onDamage: function () {
+			var message = this._validateGetDamage();
+			if (message !== "") {
+				sap.m.MessageToast.show(message);
+			} else {
+				var oBusy = new sap.m.BusyDialog();
+				var that = this;
+				this.onBusyS(oBusy);
+				var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/", true);
+				oModel1.read("/GETDAMAGESet", {
+					success: function (oData, oResponse) {
+						var res = oData.results;
+						that.damageSelectedObject.COCI_REASON_FROM = that.damageSelectedObject.VAL.substring(4, 6);
+						if (that.damageSelectedObject.COCI_REASON_FROM === "") {
+							that.damageSelectedObject.COCI_REASON_FROM = that.damageSelectedObject.VAL.substring(0, 3);
+						}
+						if (res.length > 0) {
+							var itemData = [];
+							for (var i = 0; i < res.length; i++) {
+								var itemRow = {
+									COCI_REASON: res[i].COCI_REASON,
+									COCI_RSN_TXT: res[i].COCI_RSN_TXT
+								};
+								if (that.damageSelectedObject.COCI_REASON_FROM !== itemRow.COCI_REASON &&
+								    !(that.damageSelectedObject.COCI_REASON_FROM === "PC" && itemRow.COCI_REASON === "GS")) {
+									itemData.push(itemRow);
+								}
+							}
+							var oModel = new JSONModel();
+							oModel.setData({
+								matnr: that.damageSelectedObject.MATNR,
+								maktx: that.damageSelectedObject.MAKTX,
+								qty: "",
+								damageReason: itemData
+							});
+							that.getView().setModel(oModel, "Damage");
+							that._openDialog("DamageDialog", "Damage in Transit");
+						}
+						that.onBusyE(oBusy);
+					},
+					error: function (oResponse) {
+						that.onBusyE(oBusy);
+						var oMsg = JSON.parse(oResponse.responseText);
+						message = oMsg.error.message.value;
+					}
+				});
+			}
+		},
+
+		_validateGetDamage: function () {
+			var message;
+			if (this.byId("TOUR").getValue() === "") {
+				message = "No tour data selected";
+			} else {
+				var selectedItem = this.byId("table").getSelectedContexts();
+				if (selectedItem.length === 0) {
+					message = "To use this function, please select single TRA/PC line";
+				} else if (selectedItem.length > 1) {
+					message = "To use this function, only select single TRA/PC line at a time";
+				} else {
+					var itemObj = selectedItem[0].getObject();
+					this.damageSelectedObject = itemObj;
+					if (itemObj.VAL !== null && itemObj.VAL !== "") {
+						var l_valret = itemObj.VAL.substring(0, 3);
+						if (l_valret !== "TRA" && l_valret !== "PC") {
+							message = "This feature is only applicable for TRA & PC";
+						} else if (itemObj.ITEMNR === "000000") {
+							message = "Please save this line to the unloading order before using Damage in Transit feature";
+						} else {
+							message = "";
+						}
+					}
+				}
+			}
+			return message;
+		},
+
+		onDamageQtyLiveChange: function (oEvent) {
+			this._checkInputQty(oEvent, "DamageQty");
+		},
+
+		onDamageOk: function () {
+			var qty = this.byId("DamageQty").getValue();
+			this.damageSelectedObject.COCI_REASON_TO = this.byId("DamageChgReas").getSelectedKey();
+			if (qty === "" || qty === "0") {
+				sap.m.MessageToast.show("Please provide quantity");
+			} else if (Number(this.damageSelectedObject.QTYV) === 0 && Number(qty) > Number(this.damageSelectedObject.QTYC)) {
+				sap.m.MessageToast.show("Transferring more than Actual Qty is not allowed");
+			} else if (Number(this.damageSelectedObject.QTYV) < 0 && Number(qty) > Number(this.damageSelectedObject.QTYC)) {
+				sap.m.MessageToast.show("In case of Goods Less, Transferring more than Actual Qty is not allowed");
+			} else if (Number(this.damageSelectedObject.QTYV) > 0 && Number(qty) > Number(this.damageSelectedObject.QTYD)) {
+				sap.m.MessageToast.show("In case of Goods More, Transferring more than Plan Qty is not allowed");
+			} else if (this.damageSelectedObject.COCI_REASON_TO === "") {
+				sap.m.MessageToast.show("Please provide change reason");
+			} else if (this.damageSelectedObject.COCI_REASON_FROM === "PC" && this.damageSelectedObject.COCI_REASON_TO === "GS") {
+				sap.m.MessageToast.show("Transferring from Good Stock to Good Stock is not allowed");
+			} else {
+				this._convertDamage(qty);
+				this.byId("DamageDialog").destroy();
+			}
+		},
+
+		_convertDamage: function (iQty) {
+			var that = this;
+			var qty = iQty;
+
+			var oBusy = new sap.m.BusyDialog();
+			this.onBusyS(oBusy);
+
+			var oTable = this.getView().byId("table");
+			var oModel2 = oTable.getModel();
+			var aTableSearchState = [];
+			this._applySearch(aTableSearchState);
+			var aContexts = oTable.getItems();
+			var itemData = [];
+
+			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/", true);
+			oModel1.read("/TRFDAMAGESet(TOUR_ID='" + this.damageSelectedObject.TOUR_ID +
+				"',MATNR='" + this.damageSelectedObject.MATNR +
+				"',COCI_REASON_FROM='" + this.damageSelectedObject.COCI_REASON_FROM +
+				"',COCI_REASON_TO='" + this.damageSelectedObject.COCI_REASON_TO +
+				"',QTYC=" + qty + ")", {
+					success: function (oData, oResponse) {
+						var res = {};
+						res = oData;
+
+						if (res !== "") {
+							for (var i = 0; i < aContexts.length; i++) {
+								if (aContexts[i]._bGroupHeader === false) {
+									var l_matnr = oModel2.getProperty("MATNR", aContexts[i].getBindingContext());
+									var l_val = oModel2.getProperty("VAL", aContexts[i].getBindingContext()).substring(0, 3);
+									var l_val_2 = oModel2.getProperty("VAL", aContexts[i].getBindingContext()).substring(4, 6);
+									var l_ret = oModel2.getProperty("RET", aContexts[i].getBindingContext());
+
+									var itemRow = {
+										COMP: oModel2.getProperty("COMP", aContexts[i].getBindingContext()),
+										RET: oModel2.getProperty("RET", aContexts[i].getBindingContext()),
+										MATNR: oModel2.getProperty("MATNR", aContexts[i].getBindingContext()),
+										MAKTX: oModel2.getProperty("MAKTX", aContexts[i].getBindingContext()),
+										UOM: oModel2.getProperty("UOM", aContexts[i].getBindingContext()),
+										QTYD: oModel2.getProperty("QTYD", aContexts[i].getBindingContext()),
+										QTYC: oModel2.getProperty("QTYC", aContexts[i].getBindingContext()),
+										TOUR_ID: oModel2.getProperty("TOUR_ID", aContexts[i].getBindingContext()),
+										ITEMNR: oModel2.getProperty("ITEMNR", aContexts[i].getBindingContext()),
+										EAN11: oModel2.getProperty("EAN11", aContexts[i].getBindingContext()),
+										VAL: oModel2.getProperty("VAL", aContexts[i].getBindingContext()),
+										QTYV: oModel2.getProperty("QTYV", aContexts[i].getBindingContext())
+									};
+									// Source from
+									if ((l_ret === "2" && l_matnr === that.damageSelectedObject.MATNR && l_val_2 === that.damageSelectedObject.COCI_REASON_FROM) ||
+										(l_ret === "" && l_matnr === that.damageSelectedObject.MATNR && l_val === that.damageSelectedObject.COCI_REASON_FROM)) {
+										itemRow.QTYD = String(Number(that.damageSelectedObject.QTYD) - Number(qty));
+										itemRow.QTYC = String(Number(that.damageSelectedObject.QTYC) - Number(qty));
+									}
+									// Target to
+									else
+									if ((l_ret === "2" && l_matnr === that.damageSelectedObject.MATNR && l_val_2 === that.damageSelectedObject.COCI_REASON_TO) ||
+										(l_ret === "" && l_matnr === that.damageSelectedObject.MATNR && l_val === "PC" &&
+											that.damageSelectedObject.COCI_REASON_TO === "GS")) {
+										itemRow.QTYD = String(Number(itemRow.QTYD) + Number(qty));
+										itemRow.QTYC = String(Number(itemRow.QTYC) + Number(qty));
+
+										var l_existingFound = true;
+									}
+									itemData.push(itemRow);
+								}
+							}
+
+							if (!l_existingFound) {
+								itemRow = {
+									COMP: res.COMP,
+									RET: res.RET,
+									MATNR: res.MATNR,
+									MAKTX: res.MAKTX,
+									UOM: res.UOM,
+									QTYD: res.QTYD,
+									QTYC: res.QTYC,
+									TOUR_ID: res.TOUR_ID,
+									ITEMNR: res.ITEMNR,
+									EAN11: res.EAN11,
+									VAL: res.VAL,
+									QTYV: res.QTYV
+								};
+								itemData.push(itemRow);
+							}
+
+							oModel2.setData({
+								data: itemData
+							});
+							oTable.removeSelections(true);
+							oModel2.refresh(true);
+						}
+						sap.m.MessageToast.show(qty + " PC of " + that.damageSelectedObject.COCI_REASON_FROM +
+							" have been successfully transferred to " +
+							that.damageSelectedObject.COCI_REASON_TO);
+						that.onBusyE(oBusy);
+					},
+					error: function (oResponse) {
+						that.onBusyE(oBusy);
+						var oMsg = JSON.parse(oResponse.responseText);
+						sap.m.MessageToast.show(oMsg.error.message.value);
+					}
+				});
+		},
+
+		onDamageCancel: function () {
+			this.byId("DamageDialog").destroy();
+		},
+
+		/* =========================================================== */
+		/* End of Damage in Transit									   */
+		/* =========================================================== */
+
+		/* =========================================================== */
+		/* Begin of Change Return Reason							   */
+		/* =========================================================== */
 		onChgRetReas: function () {
 			var message = this._validateChgReas();
 			if (message !== "") {
@@ -143,7 +362,7 @@ sap.ui.define([
 						if (l_valret !== "RET") {
 							message = "This feature is only applicable for RET";
 						} else if (itemObj.ITEMNR === "000000") {
-							message = "Please save this line to the unloading order before transferring to PC";
+							message = "Please save this line to the unloading order before using Change Return Reason feature";
 						} else {
 							message = "";
 						}
@@ -151,6 +370,10 @@ sap.ui.define([
 				}
 			}
 			return message;
+		},
+
+		onCrdQtyLiveChange: function (oEvent) {
+			this._checkInputQty(oEvent, "CrdQty");
 		},
 
 		onCrdOk: function () {
@@ -193,7 +416,7 @@ sap.ui.define([
 					success: function (oData, oResponse) {
 						var res = {};
 						res = oData;
-						
+
 						if (res !== "") {
 							for (var i = 0; i < aContexts.length; i++) {
 								if (aContexts[i]._bGroupHeader === false) {
@@ -221,27 +444,23 @@ sap.ui.define([
 										itemRow.QTYC = String(Number(that.crdSelectedObject.QTYC) - Number(qty));
 									}
 									// Target to return
-									else if ( (l_ret === "1" && l_matnr === that.crdSelectedObject.MATNR && l_val === that.crdSelectedObject.CHG_REASON_TO) ||
-											  (l_ret === "" && l_matnr === that.crdSelectedObject.MATNR && that.crdSelectedObject.CHG_REASON_TO === "GS")) {
-										// itemRow.MATNR = res.MATNR;
-										// itemRow.MAKTX = res.MAKTX;
-										// itemRow.UOM = res.UOM;
+									else
+									if ((l_ret === "1" && l_matnr === that.crdSelectedObject.MATNR && l_val === that.crdSelectedObject.CHG_REASON_TO) ||
+										(l_ret === "" && l_matnr === that.crdSelectedObject.MATNR && l_val === "PC" &&
+											that.crdSelectedObject.CHG_REASON_TO === "GS")) {
 										itemRow.QTYD = String(Number(itemRow.QTYD) + Number(qty));
 										itemRow.QTYC = String(Number(itemRow.QTYC) + Number(qty));
-										// itemRow.ITEMNR = res.ITEMNR;
-										// itemRow.EAN11 = res.EAN11;
-										// itemRow.VAL = res.VAL;
-										
+
 										var l_existingFound = true;
 									}
 									itemData.push(itemRow);
 								}
 							}
-							
-							if (!l_existingFound){
+
+							if (!l_existingFound) {
 								itemRow = {
 									COMP: res.COMP,
-									RET: res.RET, 
+									RET: res.RET,
 									MATNR: res.MATNR,
 									MAKTX: res.MAKTX,
 									UOM: res.UOM,
@@ -255,7 +474,7 @@ sap.ui.define([
 								};
 								itemData.push(itemRow);
 							}
-							
+
 							oModel2.setData({
 								data: itemData
 							});
@@ -277,7 +496,13 @@ sap.ui.define([
 		onCrdCancel: function () {
 			this.byId("ChgReasDialog").destroy();
 		},
+		/* =========================================================== */
+		/* End of Change Return Reason 			    				   */
+		/* =========================================================== */
 
+		/* =========================================================== */
+		/* Begin of Open Box Feature								   */
+		/* =========================================================== */
 		onOpenBox: function () {
 			var message = this._validateOpenBox();
 			if (message !== "") {
@@ -416,8 +641,8 @@ sap.ui.define([
 									itemData.push(itemRow);
 								}
 							}
-							
-							if (!l_existingFound){
+
+							if (!l_existingFound) {
 								itemRow = {
 									COMP: res.COMP,
 									RET: res.RET,
@@ -434,7 +659,7 @@ sap.ui.define([
 								};
 								itemData.push(itemRow);
 							}
-							
+
 							oModel2.setData({
 								data: itemData
 							});
@@ -455,6 +680,9 @@ sap.ui.define([
 		onObdCancel: function () {
 			this.byId("OpenBoxDialog").destroy();
 		},
+		/* =========================================================== */
+		/* End of Open Box Feature									   */
+		/* =========================================================== */
 
 		onOkDialog: function (path) {
 			var that = this;
@@ -1284,7 +1512,8 @@ sap.ui.define([
 							// Begin of Version 3
 							var l_val = oModel.getProperty("VAL", aItems[iRowIndex].getBindingContext());
 							var l_chgReas = l_val.substring(4, 6);
-							if (l_chgReas !== "R1" && l_chgReas !== "R2" && l_chgReas !== "R3" && l_chgReas !== "R4" && l_chgReas !== "R5") {
+							var l_regex = /^[RD]/;
+							if (!l_regex.test(l_chgReas)) {
 								l_chgReas = "";
 							}
 							// End of Version 3
@@ -1321,11 +1550,20 @@ sap.ui.define([
 							// l_matnr = oModel.getProperty("MATNR", aContexts[iRowIndex1].getBindingContext());
 							// l_itemnr = oModel.getProperty("ITEMNR", aContexts[iRowIndex1].getBindingContext());
 							var oThisObj = aContexts[iRowIndex1].getObject();
+							
+							l_chgReas = oThisObj.VAL.substring(4, 6);
+							if (!l_regex.test(l_chgReas)) {
+								l_chgReas = "";
+							}
 
 							itemData.push({
 								ITEMNR: oThisObj.ITEMNR,
 								MATNR: oThisObj.MATNR,
 								UOM: oThisObj.UOM,
+								// Begin of Version 3
+								SPEC_RETURN: oThisObj.RET,
+								CHG_REAS: l_chgReas,
+								// End of Version 3
 								STATUS: "X"
 							});
 
