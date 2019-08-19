@@ -69,6 +69,14 @@ sap.ui.define([
 			myModel.setSizeLimit(500);
 
 			this.oSearchField = this.getView().byId("NMATNR");
+
+			// Begin of Version 3
+			this.getView().setModel(new JSONModel({
+				globalFilter: "",
+			}), "ui");
+			this._oGlobalFilter = null;
+			this._oPriceFilter = null;
+			// End of Version 3
 		},
 
 		onBusyS: function (oBusy) {
@@ -81,7 +89,37 @@ sap.ui.define([
 		},
 
 		/* =========================================================== */
-		/* End of Damage in Transit									   */
+		/* Begin of Table cell filter								   */
+		/* =========================================================== */
+		onFilterTable: function (oEvent) {
+			var sQuery = oEvent.getParameter("query");
+			this._oGlobalFilter = null;
+
+			if (sQuery) {
+				this._oGlobalFilter = new Filter([
+					new Filter("MATNR", FilterOperator.Contains, sQuery),
+					new Filter("MAKTX", FilterOperator.Contains, sQuery)
+				], false);
+			}
+
+			this._filter();
+		},
+
+		_filter: function () {
+			var oFilter = null;
+
+			if (this._oGlobalFilter) {
+				oFilter = this._oGlobalFilter;
+			}
+
+			this.byId("table").getBinding("items").filter(oFilter, "Application");
+		},
+		/* =========================================================== */
+		/* End of Table cell filter								   */
+		/* =========================================================== */
+
+		/* =========================================================== */
+		/* Begin of Damage in Transit								   */
 		/* =========================================================== */
 		onDamage: function () {
 			var message = this._validateGetDamage();
@@ -107,7 +145,7 @@ sap.ui.define([
 									COCI_RSN_TXT: res[i].COCI_RSN_TXT
 								};
 								if (that.damageSelectedObject.COCI_REASON_FROM !== itemRow.COCI_REASON &&
-								    !(that.damageSelectedObject.COCI_REASON_FROM === "PC" && itemRow.COCI_REASON === "GS")) {
+									!(that.damageSelectedObject.COCI_REASON_FROM === "PC" && itemRow.COCI_REASON === "GS")) {
 									itemData.push(itemRow);
 								}
 							}
@@ -1016,6 +1054,9 @@ sap.ui.define([
 					sap.m.MessageBox.error("Goods More is not allowed for Return Items");
 					colVal_qtyc = Number(colVal_qtyd) + Number(colVal_qtyv);
 					aCells[6].setValue(colVal_qtyc);
+				} else if (l_ret === "2" && colVal_qtyc !== colVal_qtyd) {
+					sap.m.MessageBox.error("Goods More/Goods Less is not allowed for Damaged Items");
+					aCells[6].setValue(colVal_qtyd);
 				} else {
 					// End of Version 3
 
@@ -1550,7 +1591,7 @@ sap.ui.define([
 							// l_matnr = oModel.getProperty("MATNR", aContexts[iRowIndex1].getBindingContext());
 							// l_itemnr = oModel.getProperty("ITEMNR", aContexts[iRowIndex1].getBindingContext());
 							var oThisObj = aContexts[iRowIndex1].getObject();
-							
+
 							l_chgReas = oThisObj.VAL.substring(4, 6);
 							if (!l_regex.test(l_chgReas)) {
 								l_chgReas = "";
@@ -1623,25 +1664,26 @@ sap.ui.define([
 		},
 
 		onPri: function () {
-			var tour = this.getView().byId("TOUR")._lastValue;
-			if (tour === "") {
-				sap.m.MessageToast.show("No tour data for Print");
-			} else {
+			this._printForm("", "");
+			// var tour = this.getView().byId("TOUR")._lastValue;
+			// if (tour === "") {
+			// 	sap.m.MessageToast.show("No tour data for Print");
+			// } else {
 
-				var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/PRINTSet('" + tour + "')/$value";
-				// // var url = "test/Capture.JPG";
-				sap.m.URLHelper.redirect(url, true);
-				// 	var hContent = '<html><head></head><body>';
-				// var bodyContent = $(".printAreaBox").html();
-				// var closeContent = "</body></html>";
-				// var htmlpage = hContent + bodyContent + closeContent;
+			// 	var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/PRINTSet('" + tour + "')/$value";
+			// 	// // var url = "test/Capture.JPG";
+			// 	sap.m.URLHelper.redirect(url, true);
+			// 	// 	var hContent = '<html><head></head><body>';
+			// 	// var bodyContent = $(".printAreaBox").html();
+			// 	// var closeContent = "</body></html>";
+			// 	// var htmlpage = hContent + bodyContent + closeContent;
 
-				// 		cordova.plugins.printer.print(htmlpage, {
-				// 				duplex: 'long'
-				// 			}, function(res) {
-				// 				alert(res ? 'Done' : 'Canceled');
-				// 			});
-			}
+			// 	// 		cordova.plugins.printer.print(htmlpage, {
+			// 	// 				duplex: 'long'
+			// 	// 			}, function(res) {
+			// 	// 				alert(res ? 'Done' : 'Canceled');
+			// 	// 			});
+			// }
 			// window.print();
 			// new sap.m.Link(url, true);
 
@@ -1664,6 +1706,42 @@ sap.ui.define([
 			// 		jQuery.sap.log.error("onPrint needs a valid target container [view|data:targetId=\"SID\"]");
 			// 	}
 			// }
+		},
+
+		onPrintItemized: function () {
+			if (this.byId("TOUR").getValue() === "") {
+				sap.m.MessageToast.show("No tour data selected");
+			} else {
+				this._openDialog("PrintItemizedDialog", "Select UoM");
+			}
+		},
+
+		onPrintItemizedOk: function (oEvent) {
+			if (this.byId("BOXA").getSelected()) {
+				var selectedUom = "0";
+			} else if (this.byId("PCA").getSelected()) {
+				selectedUom = "1";
+			} else if (this.byId("RETA").getSelected()) {
+				selectedUom = "2";
+			} else if (this.byId("TRAA").getSelected()) {
+				selectedUom = "3";
+			}
+			this.byId("PrintItemizedDialog").close();
+			this._printForm(oEvent, selectedUom);
+		},
+
+		_printForm: function (oEvent, iUom) {
+			var tour = this.getView().byId("TOUR")._lastValue;
+			if (tour === "") {
+				sap.m.MessageToast.show("No tour data for Print");
+			} else {
+				var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/PRINTSet(TOUR_ID='" + tour + "',UOM='" + iUom + "')/$value";
+				sap.m.URLHelper.redirect(url, true);
+			}
+		},
+
+		onPrintItemizedClose: function () {
+			this.byId("PrintItemizedDialog").close();
 		},
 
 		onSearchN: function (oEvent) { //search by item 0

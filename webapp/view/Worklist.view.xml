@@ -175,6 +175,7 @@
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button3" press="onUnc" icon="sap-icon://activity-items"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button1" press="onSave1" icon="sap-icon://save"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button2" press="onPri" icon="sap-icon://print"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="btnPrintItemized" press="onPrintItemized" icon="sap-icon://print" text="Print Itemized"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button13" press="onSearch0" icon="sap-icon://filter" text="Filter Zero Qty"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button19" press="onSearchN" icon="sap-icon://filter" text="Filter New Item"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="button12" press="onAddS" icon="sap-icon://add-product"

@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog id="PrintItemizedDialog" resizable="false" contentWidth="auto" draggable="true">
+		<HBox>
+			<RadioButton groupName="GroupA" text="BOX" id="BOXA" selected="true" class="sapUiNoPadding sapUiNoMargin"/>
+			<RadioButton groupName="GroupA" text="PC" id="PCA"/>
+			<RadioButton groupName="GroupA" text="RET" id="RETA"/>
+			<RadioButton groupName="GroupA" text="TRA" id="TRAA" class="sapUiSmallMarginEnd"/>
+		</HBox>
+		<beginButton>
+			<Button id="btnOk" text="OK" press="onPrintItemizedOk"></Button>
+		</beginButton>
+		<endButton>
+			<Button id="btnClose" text="Close" press="onPrintItemizedClose"></Button>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
