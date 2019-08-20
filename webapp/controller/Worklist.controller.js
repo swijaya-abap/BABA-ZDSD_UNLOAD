@@ -69,14 +69,6 @@ sap.ui.define([
 			myModel.setSizeLimit(500);
 
 			this.oSearchField = this.getView().byId("NMATNR");
-
-			// Begin of Version 3
-			this.getView().setModel(new JSONModel({
-				globalFilter: "",
-			}), "ui");
-			this._oGlobalFilter = null;
-			this._oPriceFilter = null;
-			// End of Version 3
 		},
 
 		onBusyS: function (oBusy) {
@@ -89,33 +81,76 @@ sap.ui.define([
 		},
 
 		/* =========================================================== */
-		/* Begin of Table cell filter								   */
+		/* Begin of Show Related Feature							   */
 		/* =========================================================== */
-		onFilterTable: function (oEvent) {
-			var sQuery = oEvent.getParameter("query");
-			this._oGlobalFilter = null;
-
-			if (sQuery) {
-				this._oGlobalFilter = new Filter([
-					new Filter("MATNR", FilterOperator.Contains, sQuery),
-					new Filter("MAKTX", FilterOperator.Contains, sQuery)
-				], false);
+		onShowRelated: function () {
+			var message = this._validateShowRelated();
+			if (message !== "") {
+				sap.m.MessageToast.show(message);
+			} else {
+				this._openDialog("ShowRelatedDialog", "Choose Option");
 			}
-
-			this._filter();
 		},
 
-		_filter: function () {
-			var oFilter = null;
-
-			if (this._oGlobalFilter) {
-				oFilter = this._oGlobalFilter;
+		_validateShowRelated: function () {
+			var message;
+			var selectedItem = this.byId("table").getSelectedContexts();
+			if (selectedItem.length === 0) {
+				message = "To use this function, please select single line";
+			} else if (selectedItem.length > 1) {
+				message = "To use this function, only select single line at a time";
+			} else {
+				this.srdSelectedObject = selectedItem[0].getObject();
+				message = "";
 			}
+			return message;
+		},
 
-			this.byId("table").getBinding("items").filter(oFilter, "Application");
+		onSrdOk: function () {
+			this._filterRelated();
+			this.byId("ShowRelatedDialog").destroy();
+		},
+
+		_filterRelated: function () {
+			var kunnr = this.getView().byId("oSelect1").getSelectedKey();
+			var date = this.getView().byId("DATE").getValue();
+			var oModel = this.getView().byId("table").getModel();
+			var val = "";
+			var uncnf = "";
+			this.onRef();
+			this.onblank(this);
+			this.onGetM(kunnr, date, uncnf, oModel, val);
+
+			if (this.byId("Sku").getSelected()) {
+				var sQuery = this.srdSelectedObject.MATNR;
+			} else {
+				var sPos = this.srdSelectedObject.MAKTX.indexOf(" ");
+				if (sPos === -1) {
+					sQuery = this.srdSelectedObject.MAKTX;
+				} else {
+					sQuery = this.srdSelectedObject.MAKTX.substring(0, sPos);
+				}
+			}
+			var aTableSearchState = [new Filter([
+				new Filter("MATNR", FilterOperator.Contains, sQuery),
+				new Filter("MAKTX", FilterOperator.Contains, sQuery)
+			], false)];
+			this._applySearch(aTableSearchState);
+			// this._oGlobalFilter = null;
+
+			// if (sQuery) {
+			// 	this._oGlobalFilter = new Filter([
+			// 		new Filter("MATNR", FilterOperator.Contains, sQuery),
+			// 		new Filter("MAKTX", FilterOperator.Contains, sQuery)
+			// 	], false);
+			// }
+		},
+
+		onSrdClose: function () {
+			this.byId("ShowRelatedDialog").destroy();
 		},
 		/* =========================================================== */
-		/* End of Table cell filter								   */
+		/* Begin of Show Related Feature							   */
 		/* =========================================================== */
 
 		/* =========================================================== */
