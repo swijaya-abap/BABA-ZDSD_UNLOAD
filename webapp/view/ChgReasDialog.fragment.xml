@@ -2,7 +2,7 @@
 	<Dialog id="ChgReasDialog" resizable="false" contentWidth="auto" draggable="true">
 		<Input id="CrdMaterial" value="{Crd>/matnr}" editable="false"/>
 		<Input id="CrdDescription" value="{Crd>/maktx}" editable="false"/>
-		<Label text="Quantity"/>
+		<Label text="Quantity" required="true"/>
 		<Input id="CrdQty" value="{Crd>/qty}" type="Number" liveChange="onCrdQtyLiveChange"/>
 		<Label text="Return Reason" required="true"/>
 		<ComboBox id="CrdChgReas" items="{ path: 'Crd>/crdChgReas' }" width="100%">
