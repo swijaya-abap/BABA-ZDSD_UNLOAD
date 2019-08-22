@@ -194,6 +194,8 @@
 				text="Change Return Reason"/>
 			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="btnDamage" press="onDamage" icon="sap-icon://collision"
 				text="Damage in Transit"/>
+			<Button ariaLabelledBy="__xmlview0--label1" width="auto" id="btnReset" press="onReset" icon="sap-icon://reset" text="Reset Unloading"
+				visible="{worklistView>/resetBtnVisibility}"/>
 		</semantic:customFooterContent>
 	</semantic:FullscreenPage>
 	<!--</Page>-->

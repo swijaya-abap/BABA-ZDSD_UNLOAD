@@ -40,7 +40,10 @@ sap.ui.define([
 				shareSendEmailSubject: this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
 				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage", [location.href]),
 				tableNoDataText: this.getResourceBundle().getText("tableNoDataText"),
-				tableBusyDelay: 0
+				tableBusyDelay: 0,
+				// Begin of Version 3
+				resetBtnVisibility: false
+					// End of Version 3
 			});
 			this.setModel(oViewModel, "worklistView");
 
@@ -79,6 +82,82 @@ sap.ui.define([
 		onBusyE: function (oBusy) {
 			oBusy.close();
 		},
+
+		/* =========================================================== */
+		/* Begin of Reset Unloading Feature							   */
+		/* =========================================================== */
+		onReset: function () {
+			var that = this;
+			if (this.byId("TOUR").getValue() === "") {
+				sap.m.MessageToast.show("No tour data selected");
+			} else {
+				MessageBox.warning(
+					"This will reset the unloading order and revert back all the changes done so far to the unloading order. Do you want to continue?", {
+						actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+						onClose: function (sAction) {
+							if (sAction === MessageBox.Action.YES) {
+								that._showResetDialog();
+							}
+						}
+					}
+				);
+			}
+		},
+
+		_showResetDialog: function () {
+			this._openDialog("ResetDialog", "Reset Unloading");
+		},
+
+		onRdOk: function () {
+			var message = this._validateReset();
+			if (message !== "") {
+				MessageBox.error(message);
+			} else {
+				this._resetUnloading();
+				this.byId("ResetDialog").destroy();
+			}
+		},
+
+		_validateReset: function () {
+			var message = "";
+			if (this.globalVar.adminPass === "") {
+				message = "Loader password is not maintained in the system. Reset unsuccessful. Contact System Admin";
+			} else if (this.globalVar.adminPass !== this.byId("RdPassword").getValue()) {
+				message = "Wrong secure code.";
+			}
+			return message;
+		},
+
+		_resetUnloading: function () {
+			var oModel = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/", true);
+			var oEntry1 = {};
+			var that = this;
+			var oBusy = new sap.m.BusyDialog();
+			
+			this.onBusyS(oBusy);
+			
+			oEntry1.TOUR_ID = that.getView().byId("TOUR").getValue();
+			oModel.create("/RESETSet", oEntry1, {
+				success: function (oData, oResponse) {
+					MessageBox.information("The unloading order has been reset successfully");
+					that.onFet();
+					that.onBusyE(oBusy);
+				},
+				error: function (oResponse) {
+					that.onBusyE(oBusy);
+					var oMsg = JSON.parse(oResponse.responseText);
+					jQuery.sap.require("sap.m.MessageBox");
+					sap.m.MessageToast.show(oMsg.error.message.value);
+				}
+			});
+		},
+
+		onRdCancel: function () {
+			this.byId("ResetDialog").destroy();
+		},
+		/* =========================================================== */
+		/* End of Reset Unloading Feature							   */
+		/* =========================================================== */
 
 		/* =========================================================== */
 		/* Begin of Show Related Feature							   */
@@ -1346,6 +1425,19 @@ sap.ui.define([
 					res = oData.results;
 
 					if (res.length > 0) {
+						// Begin of Version 3
+						that.globalVar = {
+							adminPass: res[0].BCODE
+						};
+						var viewModel = that.getView().getModel("worklistView");
+						if (res[0].RESET_ACT !== "") {
+							var resetBtnVisibility = true;
+						} else {
+							resetBtnVisibility = false;
+						}
+						viewModel.setProperty("/resetBtnVisibility", resetBtnVisibility);
+						that.getView().setModel("worklistView", viewModel);
+						// End of Version 3
 						for (var iRowIndex = 0; iRowIndex < res.length; iRowIndex++) {
 							var itemRow = {
 								MATNR: res[iRowIndex].MATNR,

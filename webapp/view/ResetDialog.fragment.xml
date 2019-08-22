@@ -1,0 +1,12 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog id="ResetDialog" resizable="false" contentWidth="auto" draggable="true">
+		<Label text="Provide Secure Key" required="true"/>
+		<Input id="RdPassword" type="Password"/>
+		<beginButton>
+			<Button text="OK" press="onRdOk"/>
+		</beginButton>
+		<endButton>
+			<Button text="Cancel" press="onRdCancel"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
