@@ -64,6 +64,10 @@ sap.ui.define([
 			var oModelt = new JSONModel();
 			this.getView().byId("table").setModel(oModelt);
 			this.getView().byId("table").getModel().setSizeLimit('500');
+			
+			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/", true);
+			this.getView().byId("oSelect1").setModel(oModel1);
+			this.getView().byId("oSelect1").getModel().setSizeLimit('500');
 
 			var oModelt1 = new JSONModel();
 			this.getView().byId("oSelect2").setModel(oModelt1);
@@ -120,11 +124,42 @@ sap.ui.define([
 
 		_validateReset: function () {
 			var message = "";
+			
+			if (this.globalVar.captcha !== undefined && this.globalVar.captcha !== ""){
+				var inCaptcha = this.byId("RdInCaptcha").getValue();
+				var captcha = this.globalVar.captcha;
+				this.globalVar.captcha = this._generateCaptcha();
+				this.byId("RdGenCaptcha").setValue(this.globalVar.captcha);
+				if (inCaptcha !== captcha){
+					message = "Wrong captcha.";
+					return message;
+				}
+			}
+			
 			if (this.globalVar.adminPass === "") {
 				message = "Loader password is not maintained in the system. Reset unsuccessful. Contact System Admin";
 			} else if (this.globalVar.adminPass !== this.byId("RdPassword").getValue()) {
 				message = "Wrong secure code.";
 			}
+
+			if (message !== "") {
+				if (this.globalVar.wrongPass === undefined) this.globalVar.wrongPass = 0;
+
+				if (this.globalVar.wrongPass < 5) {
+					this.globalVar.wrongPass += 1;
+
+					if (this.globalVar.wrongPass === 5) {
+						this.byId("RdGenCaptcha").setVisible(true);
+						this.byId("RdInCaptcha").setVisible(true);
+						this.byId("RdCaptchaLabel").setVisible(true);
+						this.globalVar.captcha = this._generateCaptcha();
+						this.byId("RdGenCaptcha").setValue(this.globalVar.captcha);
+					}
+				}
+				this.byId("RdInCaptcha").setValue("");
+				this.byId("RdPassword").setValue("");
+			}
+
 			return message;
 		},
 
@@ -133,9 +168,9 @@ sap.ui.define([
 			var oEntry1 = {};
 			var that = this;
 			var oBusy = new sap.m.BusyDialog();
-			
+
 			this.onBusyS(oBusy);
-			
+
 			oEntry1.TOUR_ID = that.getView().byId("TOUR").getValue();
 			oModel.create("/RESETSet", oEntry1, {
 				success: function (oData, oResponse) {

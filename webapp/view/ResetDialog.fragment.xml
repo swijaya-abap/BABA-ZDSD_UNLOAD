@@ -1,5 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 	<Dialog id="ResetDialog" resizable="false" contentWidth="auto" draggable="true">
+		<Label id="RdCaptchaLabel" text="CAPTCHA" required="true" visible="false"/>
+		<Input id="RdGenCaptcha" type="Text" visible="false" enabled="false" editable="false"/>
+		<Input id="RdInCaptcha" type="Text" visible="false"/>
 		<Label text="Provide Secure Key" required="true"/>
 		<Input id="RdPassword" type="Password"/>
 		<beginButton>
