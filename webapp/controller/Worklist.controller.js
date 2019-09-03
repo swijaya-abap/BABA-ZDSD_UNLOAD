@@ -1045,6 +1045,7 @@ sap.ui.define([
 			that.getView().byId("TOUR").setValue();
 			that.getView().byId("NMATNR").setValue();
 			that.getView().byId("CONF").setSelected(false);
+			that.getView().byId("CbDetail").setSelected(false);
 			that.getView().byId("VAL").setValue();
 			that.getView().byId("oSelect2").setSelectedKey();
 			that.getView().byId("oSelect2").setEditable(true);
@@ -1826,7 +1827,10 @@ sap.ui.define([
 		},
 
 		onPri: function () {
-			this._printForm("", "");
+			// Begin of Version 3
+			var printDetail = this.byId("CbDetail").getSelected();
+			// End of Version 3
+			this._printForm("", "", printDetail);
 			// var tour = this.getView().byId("TOUR")._lastValue;
 			// if (tour === "") {
 			// 	sap.m.MessageToast.show("No tour data for Print");
@@ -1888,16 +1892,19 @@ sap.ui.define([
 			} else if (this.byId("TRAA").getSelected()) {
 				selectedUom = "3";
 			}
+			// Begin of Version 3
+			var printDetail = this.byId("CbDetail").getSelected();
+			// End of Version 3
 			this.byId("PrintItemizedDialog").close();
-			this._printForm(oEvent, selectedUom);
+			this._printForm(oEvent, selectedUom, printDetail);
 		},
 
-		_printForm: function (oEvent, iUom) {
+		_printForm: function (oEvent, iUom, iDetail) {
 			var tour = this.getView().byId("TOUR")._lastValue;
 			if (tour === "") {
 				sap.m.MessageToast.show("No tour data for Print");
 			} else {
-				var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/PRINTSet(TOUR_ID='" + tour + "',UOM='" + iUom + "')/$value";
+				var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/PRINTSet(TOUR_ID='" + tour + "',UOM='" + iUom + "',DET='" + iDetail + "')/$value";
 				sap.m.URLHelper.redirect(url, true);
 			}
 		},

@@ -156,7 +156,10 @@
 					<!--</ComboBox>-->
 				</form:SimpleForm>
 			</Panel>
-			<CheckBox selected="false" id="CONF" text="Final Confirmation"/>
+			<HBox>
+				<CheckBox selected="false" id="CONF" text="Final Confirmation"/>
+				<CheckBox selected="false" id="CbDetail" text="{i18n>worklistViewCbDetail}"/>
+			</HBox>
 			<form:SimpleForm>
 				<HBox>
 					<Label text="BOX:" design="Bold"/>
