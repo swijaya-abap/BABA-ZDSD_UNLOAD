@@ -1901,6 +1901,13 @@ sap.ui.define([
 
 		_printForm: function (oEvent, iUom, iDetail) {
 			var tour = this.getView().byId("TOUR")._lastValue;
+			
+			if (iDetail){
+				iDetail = "X";
+			} else {
+				iDetail = "";
+			}
+			
 			if (tour === "") {
 				sap.m.MessageToast.show("No tour data for Print");
 			} else {
