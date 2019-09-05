@@ -361,8 +361,8 @@ sap.ui.define([
 				sap.m.MessageToast.show("Transferring more than Actual Qty is not allowed");
 			} else if (Number(this.damageSelectedObject.QTYV) < 0 && Number(qty) > Number(this.damageSelectedObject.QTYC)) {
 				sap.m.MessageToast.show("In case of Goods Less, Transferring more than Actual Qty is not allowed");
-			} else if (Number(this.damageSelectedObject.QTYV) > 0 && Number(qty) > Number(this.damageSelectedObject.QTYD)) {
-				sap.m.MessageToast.show("In case of Goods More, Transferring more than Plan Qty is not allowed");
+			} else if (Number(this.damageSelectedObject.QTYV) > 0 && Number(qty) > Number(this.damageSelectedObject.QTYC)) {
+				sap.m.MessageToast.show("In case of Goods More, Transferring more than Actual Qty is not allowed");
 			} else if (this.damageSelectedObject.COCI_REASON_TO === "") {
 				sap.m.MessageToast.show("Please provide change reason");
 			} else if (this.damageSelectedObject.COCI_REASON_FROM === "PC" && this.damageSelectedObject.COCI_REASON_TO === "GS") {
