@@ -32,6 +32,7 @@ sap.ui.define([
 			iOriginalBusyDelay = oTable.getBusyIndicatorDelay();
 			// keeps the search state
 			this._aTableSearchState = [];
+			this.globalVar = {};
 
 			// Model used to manipulate control states
 			oViewModel = new JSONModel({
@@ -64,7 +65,7 @@ sap.ui.define([
 			var oModelt = new JSONModel();
 			this.getView().byId("table").setModel(oModelt);
 			this.getView().byId("table").getModel().setSizeLimit('500');
-			
+
 			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/", true);
 			this.getView().byId("oSelect1").setModel(oModel1);
 			this.getView().byId("oSelect1").getModel().setSizeLimit('500');
@@ -124,18 +125,18 @@ sap.ui.define([
 
 		_validateReset: function () {
 			var message = "";
-			
-			if (this.globalVar.captcha !== undefined && this.globalVar.captcha !== ""){
+
+			if (this.globalVar.captcha !== undefined && this.globalVar.captcha !== "") {
 				var inCaptcha = this.byId("RdInCaptcha").getValue();
 				var captcha = this.globalVar.captcha;
 				this.globalVar.captcha = this._generateCaptcha();
 				this.byId("RdGenCaptcha").setValue(this.globalVar.captcha);
-				if (inCaptcha !== captcha){
+				if (inCaptcha !== captcha) {
 					message = "Wrong captcha.";
 					return message;
 				}
 			}
-			
+
 			if (this.globalVar.adminPass === "") {
 				message = "Loader password is not maintained in the system. Reset unsuccessful. Contact System Admin";
 			} else if (this.globalVar.adminPass !== this.byId("RdPassword").getValue()) {
@@ -891,8 +892,8 @@ sap.ui.define([
 				if (aItems !== undefined) {
 					for (var iRowIndex1 = 0; iRowIndex1 < aItems.length; iRowIndex1++) {
 						var l_ean = aItems[iRowIndex1].EAN11;
-
-						if (l_ean === input) {
+						var l_ret = aItems[iRowIndex1].VAL.substring(0, 3);
+						if (l_ean === input && l_ret !== "RET") {
 							flg = "X";
 							break;
 						}
@@ -910,7 +911,7 @@ sap.ui.define([
 					var oBusy = new sap.m.BusyDialog();
 					that.onBusyS(oBusy);
 
-					oModel1.read("/MATERIALSet(MATNR='" + input + "',VRKME='')", {
+					oModel1.read("/MATERIALSet(MATNR='" + input + "',TOUR_ID='" + that.globalVar.tour_id + "',VRKME='')", {
 						success: function (oData, oResponse) {
 
 							var res = {};
@@ -1265,6 +1266,7 @@ sap.ui.define([
 			var date = that.getView().byId("DATE").getValue();
 			var uncnf = "";
 			var tour = this.getView().byId("TOUR")._lastValue;
+			this.globalVar.tour_id = tour;
 			if (tour === "") {
 				sap.m.MessageToast.show("No tour data selected");
 			} else {
@@ -1462,9 +1464,7 @@ sap.ui.define([
 
 					if (res.length > 0) {
 						// Begin of Version 3
-						that.globalVar = {
-							adminPass: res[0].BCODE
-						};
+						that.globalVar.adminPass = res[0].BCODE;
 						var viewModel = that.getView().getModel("worklistView");
 						if (res[0].RESET_ACT !== "") {
 							var resetBtnVisibility = true;
@@ -1901,17 +1901,18 @@ sap.ui.define([
 
 		_printForm: function (oEvent, iUom, iDetail) {
 			var tour = this.getView().byId("TOUR")._lastValue;
-			
-			if (iDetail){
+
+			if (iDetail) {
 				iDetail = "X";
 			} else {
 				iDetail = "";
 			}
-			
+
 			if (tour === "") {
 				sap.m.MessageToast.show("No tour data for Print");
 			} else {
-				var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/PRINTSet(TOUR_ID='" + tour + "',UOM='" + iUom + "',DET='" + iDetail + "')/$value";
+				var url = "/sap/opu/odata/sap/ZDSDO_UNLOAD_V3_SRV/PRINTSet(TOUR_ID='" + tour + "',UOM='" + iUom + "',DET='" + iDetail +
+					"')/$value";
 				sap.m.URLHelper.redirect(url, true);
 			}
 		},
@@ -2280,7 +2281,8 @@ sap.ui.define([
 							// var l_ean11 = oModel.getProperty("EAN11", aItems[iRowIndex1].getBindingContext());
 							var l_matnr = aItems[iRowIndex1].MATNR;
 							var l_uom = aItems[iRowIndex1].UOM;
-							if (l_matnr === input && l_uom === uom) {
+							var l_ret = aItems[iRowIndex1].VAL.substring(0, 3);
+							if (l_matnr === input && l_uom === uom && l_ret !== "RET") {
 								flg = "X";
 								break;
 							}
@@ -2430,7 +2432,7 @@ sap.ui.define([
 								// var l_ean11 = oModel.getProperty("EAN11", aItems[iRowIndex1].getBindingContext());
 								var l_matnr = aItems[iRowIndex1].MATNR;
 								var l_uom = aItems[iRowIndex1].UOM;
-								var l_ret = aItems[iRowIndex1].VAL;
+								var l_ret = aItems[iRowIndex1].VAL.substring(0, 3);
 								if (l_matnr === input && l_uom === uom && l_ret !== "RET") {
 									flg = "X";
 									// aItems[iRowIndex1].QTYC = val;
