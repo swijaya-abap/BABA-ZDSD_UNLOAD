@@ -422,16 +422,28 @@ sap.ui.define([
 									// Source from
 									if ((l_ret === "2" && l_matnr === that.damageSelectedObject.MATNR && l_val_2 === that.damageSelectedObject.COCI_REASON_FROM) ||
 										(l_ret === "" && l_matnr === that.damageSelectedObject.MATNR && l_val === that.damageSelectedObject.COCI_REASON_FROM)) {
-										itemRow.QTYD = String(Number(that.damageSelectedObject.QTYD) - Number(qty));
+										var l_planQty = Number(that.damageSelectedObject.QTYD) - Number(qty);
+										itemRow.QTYD = String(l_planQty);
 										itemRow.QTYC = String(Number(that.damageSelectedObject.QTYC) - Number(qty));
+										if (l_planQty < 0) {
+											itemRow.QTYV = itemRow.QTYC;
+										} else {
+											itemRow.QTYV = String(Number(itemRow.QTYC) - l_planQty);
+										}
 									}
 									// Target to
 									else
 									if ((l_ret === "2" && l_matnr === that.damageSelectedObject.MATNR && l_val_2 === that.damageSelectedObject.COCI_REASON_TO) ||
 										(l_ret === "" && l_matnr === that.damageSelectedObject.MATNR && l_val === "PC" &&
 											that.damageSelectedObject.COCI_REASON_TO === "GS")) {
-										itemRow.QTYD = String(Number(itemRow.QTYD) + Number(qty));
+										l_planQty = Number(itemRow.QTYD) + Number(qty);
+										itemRow.QTYD = String(l_planQty);
 										itemRow.QTYC = String(Number(itemRow.QTYC) + Number(qty));
+										if (l_planQty < 0) {
+											itemRow.QTYV = itemRow.QTYC;
+										} else {
+											itemRow.QTYV = String(Number(itemRow.QTYC) - l_planQty);
+										}
 
 										var l_existingFound = true;
 									}
