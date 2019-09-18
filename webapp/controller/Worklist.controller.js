@@ -425,11 +425,7 @@ sap.ui.define([
 										var l_planQty = Number(that.damageSelectedObject.QTYD) - Number(qty);
 										itemRow.QTYD = String(l_planQty);
 										itemRow.QTYC = String(Number(that.damageSelectedObject.QTYC) - Number(qty));
-										if (l_planQty < 0) {
-											itemRow.QTYV = itemRow.QTYC;
-										} else {
-											itemRow.QTYV = String(Number(itemRow.QTYC) - l_planQty);
-										}
+										itemRow.QTYV = String(Number(itemRow.QTYC) - l_planQty);
 									}
 									// Target to
 									else
@@ -1558,7 +1554,8 @@ sap.ui.define([
 						// var l_matnr = oModel.getProperty("MATNR", aItems[iRowIndex].getBindingContext());
 						// if (l_matnr !== "" && l_matnr !== undefined && l_matnr !=== null ) {
 						var l_comp = oModel.getProperty("COMP", aItems[iRowIndex].getBindingContext());
-						if (l_comp === "X") {
+						var l_qtyd = oModel.getProperty("QTYD", aItems[iRowIndex].getBindingContext()); // Version 3
+						if (l_comp === "X" || l_qtyd < 0) {
 							aItems[iRowIndex].getCells()[6].setEditable(false);
 						}
 					}
@@ -1575,7 +1572,11 @@ sap.ui.define([
 
 				for (var iRowIndex = 0; iRowIndex < aItems.length; iRowIndex++) {
 					if (aItems[iRowIndex]._bGroupHeader === false) {
-						aItems[iRowIndex].getCells()[6].setEditable(true);
+						
+						var l_qtyd = oModel.getProperty("QTYD", aItems[iRowIndex].getBindingContext());
+						if (l_qtyd >= 0){
+							aItems[iRowIndex].getCells()[6].setEditable(true);
+						}
 						// aItems[iRowIndex].getCells()[0].setIcon();
 						// aItems[iRowIndex].getCells()[0].setText();
 
@@ -1723,6 +1724,7 @@ sap.ui.define([
 							var l_itemnr = oModel.getProperty("ITEMNR", aItems[iRowIndex].getBindingContext());
 							var l_qtyd = oModel.getProperty("QTYD", aItems[iRowIndex].getBindingContext());
 							var l_qtyc = oModel.getProperty("QTYC", aItems[iRowIndex].getBindingContext());
+							var l_qtyv = oModel.getProperty("QTYV", aItems[iRowIndex].getBindingContext());
 							var l_ret = oModel.getProperty("RET", aItems[iRowIndex].getBindingContext());
 							var l_chk = oModel.getProperty("COMP", aItems[iRowIndex].getBindingContext());
 							// Begin of Version 3
@@ -1755,6 +1757,7 @@ sap.ui.define([
 								SPEC_RETURN: l_ret,
 								// Begin of Version 3
 								CHG_REAS: l_chgReas,
+								QUAN_DIFF: String(l_qtyv),
 								// End of Version 3
 								STATUS: l_chk
 							});
