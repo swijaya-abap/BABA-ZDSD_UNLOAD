@@ -1,0 +1,13 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog id="MDTDialog" resizable="false" contentWidth="auto" draggable="true">
+		<RadioButtonGroup columns="3" class="sapUiMediumMarginBottom">
+			<buttons>
+				<RadioButton id="RbMDTVirtual" text="MDT Virtual Check-in"/>
+				<RadioButton id="RbMDTFinal" text="MDT Final Check-in"/>
+			</buttons>
+		</RadioButtonGroup>
+		<beginButton>
+			<Button text="OK" press="onMDTOk"/>
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>

@@ -160,6 +160,10 @@
 				<CheckBox selected="false" id="CONF" text="Final Confirmation"/>
 				<CheckBox selected="false" id="CbDetail" text="{i18n>worklistViewCbDetail}"/>
 			</HBox>
+			<HBox>
+				<CheckBox selected="false" id="CbVirtual" text="MDT Virtual Check-In" enabled="{worklistView>/CbVirtual/enabled}" visible="{worklistView>/CbVirtual/visible}"/>
+				<CheckBox selected="false" id="CbFinal" text="MDT Final Check-In" enabled="{worklistView>/CbFinal/enabled}" visible="{worklistView>/CbFinal/visible}"/>
+			</HBox>
 			<form:SimpleForm>
 				<HBox>
 					<Label text="BOX:" design="Bold"/>

@@ -43,10 +43,22 @@ sap.ui.define([
 				tableNoDataText: this.getResourceBundle().getText("tableNoDataText"),
 				tableBusyDelay: 0,
 				// Begin of Version 3
-				resetBtnVisibility: false
-					// End of Version 3
+				resetBtnVisibility: false,
+				// End of Version 3
+				CbVirtual: {
+					enabled: false,
+					selected: false,
+					visible: false
+				},
+				CbFinal: {
+					enabled: false,
+					selected: false,
+					visible: false
+				}
 			});
 			this.setModel(oViewModel, "worklistView");
+
+			this.oViewModel = oViewModel;
 
 			// Make sure, busy indication is showing immediately so there is no
 			// break after the busy indication for loading the view's meta data is
@@ -86,6 +98,21 @@ sap.ui.define([
 
 		onBusyE: function (oBusy) {
 			oBusy.close();
+		},
+
+		/* =========================================================== */
+		/* Begin of MDT Feature										   */
+		/* =========================================================== */
+		onMDTOk: function () {
+			if (this.byId("RbMDTVirtual").getSelected()) {
+				this.globalVar.MDT_VCHECKIN = "X";
+				this.byId("CbVirtual").setSelected(true);
+			}
+			if (this.byId("RbMDTFinal").getSelected()) {
+				this.globalVar.RbMDTFinal = "X";
+				this.byId("CbFinal").setSelected(true);
+			}
+			this.byId("MDTDialog").destroy();
 		},
 
 		/* =========================================================== */
@@ -1029,6 +1056,8 @@ sap.ui.define([
 			var oTable = that.getView().byId("table");
 			var data;
 			var noData = oModel.getProperty("/data");
+			this.byId("CbVirtual").setSelected(false);
+			this.byId("CbFinal").setSelected(false);
 			// oModel.setData({
 			// 	modelData: noData
 			// });
@@ -1284,6 +1313,7 @@ sap.ui.define([
 				} else {
 					var oModel = that.getView().byId("table").getModel();
 					// that.onRef(that);
+					this.globalVar.isFetching = true;
 					that.onblank(that);
 					that.onGetM(kunnr, date, uncnf, oModel);
 				}
@@ -1480,8 +1510,35 @@ sap.ui.define([
 							resetBtnVisibility = false;
 						}
 						viewModel.setProperty("/resetBtnVisibility", resetBtnVisibility);
+						that.oViewModel.setProperty("/resetBtnVisibility", resetBtnVisibility);
 						that.getView().setModel("worklistView", viewModel);
 						// End of Version 3
+
+						that.globalVar.IS_MDT = res[0].IS_MDT;
+						that.globalVar.MDT_VCHECKIN = res[0].MDT_VCHECKIN;
+						that.globalVar.MDT_FLOSE = res[0].MDT_FLOSE;
+
+						if (that.globalVar.isFetching) {
+							that.globalVar.isFetching = false;
+							if (that.globalVar.IS_MDT === "X" && that.globalVar.MDT_VCHECKIN === "" && that.globalVar.MDT_FLOSE === "") {
+								that._openDialog("MDT", "Select MDT Transaction Type");
+							} else {
+								that.byId("CbVirtual").setSelected(false);
+								that.byId("CbFinal").setSelected(false);
+								if (that.globalVar.MDT_VCHECKIN === "X") that.byId("CbVirtual").setSelected(true);
+								else if (that.globalVar.MDT_FLOSE === "X") that.byId("CbFinal").setSelected(true);
+							}
+							debugger;
+							if (that.globalVar.IS_MDT === "X") {
+								that.oViewModel.setProperty("/CbVirtual/visible", true);
+								that.oViewModel.setProperty("/CbFinal/visible", true);
+							} else {
+								that.oViewModel.setProperty("/CbVirtual/visible", false);
+								that.oViewModel.setProperty("/CbFinal/visible", false);
+							}
+							that.getView().setModel("worklistView", that.oViewModel);
+						}
+
 						for (var iRowIndex = 0; iRowIndex < res.length; iRowIndex++) {
 							var itemRow = {
 								MATNR: res[iRowIndex].MATNR,
@@ -1572,9 +1629,9 @@ sap.ui.define([
 
 				for (var iRowIndex = 0; iRowIndex < aItems.length; iRowIndex++) {
 					if (aItems[iRowIndex]._bGroupHeader === false) {
-						
+
 						var l_qtyd = oModel.getProperty("QTYD", aItems[iRowIndex].getBindingContext());
-						if (l_qtyd >= 0){
+						if (l_qtyd >= 0) {
 							aItems[iRowIndex].getCells()[6].setEditable(true);
 						}
 						// aItems[iRowIndex].getCells()[0].setIcon();
