@@ -1528,7 +1528,7 @@ sap.ui.define([
 								if (that.globalVar.MDT_VCHECKIN === "X") that.byId("CbVirtual").setSelected(true);
 								else if (that.globalVar.MDT_FLOSE === "X") that.byId("CbFinal").setSelected(true);
 							}
-							debugger;
+
 							if (that.globalVar.IS_MDT === "X") {
 								that.oViewModel.setProperty("/CbVirtual/visible", true);
 								that.oViewModel.setProperty("/CbFinal/visible", true);
@@ -1623,6 +1623,7 @@ sap.ui.define([
 
 		onRest: function () {
 			var oTable = this.getView().byId("table");
+			var oModel = oTable.getModel();
 			var aItems = oTable.getSelectedItems(); //All rows  ; //All rows  
 
 			if (aItems.length > 0) {
@@ -1729,8 +1730,14 @@ sap.ui.define([
 			var that = this;
 			var fconf = that.getView().byId("CONF").getSelected();
 			if (fconf === true) {
+				if (this.globalVar.IS_MDT === "X") {
+					var msg =
+						"You are doing VIRTUAL CHECK-IN and FINAL CONFIRMATION. All your changes will be discarded and system will save the unloading with Default values only. Do you want to continue?";
+				} else {
+					msg = "Do you want to close the Unloading Process?";
+				}
 				MessageBox.warning(
-					"Do you want to close the Unloading Process?", {
+					msg, {
 						actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
 						onClose: function (sAction) {
 							if (sAction === "OK") {
@@ -1740,7 +1747,22 @@ sap.ui.define([
 					}
 				);
 			} else {
-				that.onSave(oEvent);
+				if (this.globalVar.IS_MDT === "X") {
+					msg =
+						"You are doing VIRTUAL CHECK-IN. All your changes will be discarded and system will save the unloading with Default values only. Do you want to continue?";
+					MessageBox.warning(
+						msg, {
+							actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+							onClose: function (sAction) {
+								if (sAction === "OK") {
+									that.onSave(oEvent);
+								}
+							}
+						}
+					);
+				} else {
+					that.onSave(oEvent);
+				}
 			}
 		},
 
@@ -1859,6 +1881,10 @@ sap.ui.define([
 					oEntry1.CONF = l_mark1;
 					oEntry1.ROUTE = that.getView().byId("oSelect1").getSelectedKey();
 					oEntry1.VAL = that.getView().byId("VAL").getValue();
+
+					oEntry1.IS_MDT = that.globalVar.IS_MDT;
+					oEntry1.MDT_VCHECKIN = that.globalVar.MDT_VCHECKIN;
+					oEntry1.MDT_FLOSE = that.globalVar.MDT_FLOSE;
 
 					//Using Deep entity the data is posted as shown below .
 					oEntry1.HEADITEMNAV = itemData;
