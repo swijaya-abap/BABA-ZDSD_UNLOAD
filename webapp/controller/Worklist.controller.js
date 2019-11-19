@@ -33,6 +33,7 @@ sap.ui.define([
 			// keeps the search state
 			this._aTableSearchState = [];
 			this.globalVar = {};
+			this.globalVar.MDT_FLOSE = "";
 
 			// Model used to manipulate control states
 			oViewModel = new JSONModel({
@@ -109,8 +110,15 @@ sap.ui.define([
 				this.byId("CbVirtual").setSelected(true);
 			}
 			if (this.byId("RbMDTFinal").getSelected()) {
-				this.globalVar.RbMDTFinal = "X";
+				this.globalVar.MDT_FLOSE = "X";
+				var kunnr = this.getView().byId("oSelect1").getSelectedKey();
+				var date = this.getView().byId("DATE").getValue();
+				var oModel = this.getView().byId("table").getModel();
+				var val = "";
+				var uncnf = "";
+				this.onblank(this);
 				this.byId("CbFinal").setSelected(true);
+				this.onGetM(kunnr, date, uncnf, oModel, val);
 			}
 			this.byId("MDTDialog").destroy();
 		},
@@ -1460,6 +1468,7 @@ sap.ui.define([
 
 			// //************************filter Date*******************************************//
 			var PLFilters = [];
+
 			PLFilters.push(new sap.ui.model.Filter({
 				path: "KUNNR",
 				operator: sap.ui.model.FilterOperator.EQ,
@@ -1475,7 +1484,7 @@ sap.ui.define([
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: date
 			}));
-
+			
 			PLFilters.push(new sap.ui.model.Filter({
 				path: "VAL",
 				operator: sap.ui.model.FilterOperator.EQ,
@@ -1486,6 +1495,13 @@ sap.ui.define([
 				path: "TOUR_ID",
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: tour
+			}));
+			
+			var flose = "'" + this.globalVar.MDT_FLOSE + "'";
+			PLFilters.push(new sap.ui.model.Filter({
+				path: "IS_FINAL",
+				operator: sap.ui.model.FilterOperator.EQ,
+				value1: flose
 			}));
 
 			//************************get values from backend based on filter Date*******************************************//
@@ -1730,7 +1746,7 @@ sap.ui.define([
 			var that = this;
 			var fconf = that.getView().byId("CONF").getSelected();
 			if (fconf === true) {
-				if (this.globalVar.IS_MDT === "X") {
+				if (this.globalVar.MDT_VCHECKIN === "X") {
 					var msg =
 						"You are doing VIRTUAL CHECK-IN and FINAL CONFIRMATION. All your changes will be discarded and system will save the unloading with Default values only. Do you want to continue?";
 				} else {
@@ -1747,7 +1763,7 @@ sap.ui.define([
 					}
 				);
 			} else {
-				if (this.globalVar.IS_MDT === "X") {
+				if (this.globalVar.MDT_VCHECKIN === "X") {
 					msg =
 						"You are doing VIRTUAL CHECK-IN. All your changes will be discarded and system will save the unloading with Default values only. Do you want to continue?";
 					MessageBox.warning(
@@ -2253,7 +2269,6 @@ sap.ui.define([
 		},
 
 		// onSearchA: function (oEvent, input) {
-		// 	debugger;
 		// 	if (oEvent.getParameters().refreshButtonPressed) {
 		// 		// Search field's 'refresh' button has been pressed.
 		// 		// This is visible if you select any master list item.
