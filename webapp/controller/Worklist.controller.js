@@ -1499,7 +1499,7 @@ sap.ui.define([
 			
 			var flose = "'" + this.globalVar.MDT_FLOSE + "'";
 			PLFilters.push(new sap.ui.model.Filter({
-				path: "IS_FINAL",
+				path: "IS_FINAL", 
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: flose
 			}));
