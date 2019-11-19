@@ -61,6 +61,10 @@ sap.ui.define([
 			var oModelt = new JSONModel();
 			this.getView().byId("table").setModel(oModelt);
 			this.getView().byId("table").getModel().setSizeLimit('500');
+			
+			var oModel1 = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZDSDO_UNLOAD_SRV/", true);
+			this.getView().byId("oSelect1").setModel(oModel1);
+			this.getView().byId("oSelect1").getModel().setSizeLimit('500');
 
 			var oModelt1 = new JSONModel();
 			this.getView().byId("oSelect2").setModel(oModelt1);
