@@ -1306,9 +1306,8 @@ sap.ui.define([
 		},
 
 		onFet: function (oEvent) {
-			var that = this;
-			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
-			var date = that.getView().byId("DATE").getValue();
+			var kunnr = this.getView().byId("oSelect1").getSelectedKey();
+			var date = this.getView().byId("DATE").getValue();
 			var uncnf = "";
 			var tour = this.getView().byId("TOUR")._lastValue;
 			this.globalVar.tour_id = tour;
@@ -1319,11 +1318,14 @@ sap.ui.define([
 				if (kunnr === "" || date === "") {
 					sap.m.MessageToast.show("Please provide Route & date");
 				} else {
-					var oModel = that.getView().byId("table").getModel();
+					var oModel = this.getView().byId("table").getModel();
 					// that.onRef(that);
 					this.globalVar.isFetching = true;
-					that.onblank(that);
-					that.onGetM(kunnr, date, uncnf, oModel);
+					this.globalVar.MDT_FLOSE = "";
+					this.globalVar.MDT_VCHECKIN = "";
+					this.globalVar.IS_MDT = "";
+					this.onblank(this);
+					this.onGetM(kunnr, date, uncnf, oModel);
 				}
 			}
 		},
@@ -1484,7 +1486,7 @@ sap.ui.define([
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: date
 			}));
-			
+
 			PLFilters.push(new sap.ui.model.Filter({
 				path: "VAL",
 				operator: sap.ui.model.FilterOperator.EQ,
@@ -1496,10 +1498,10 @@ sap.ui.define([
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: tour
 			}));
-			
-			var flose = "'" + this.globalVar.MDT_FLOSE + "'";
+
+			var flose = this.globalVar.MDT_FLOSE;
 			PLFilters.push(new sap.ui.model.Filter({
-				path: "IS_FINAL", 
+				path: "IS_MDT",
 				operator: sap.ui.model.FilterOperator.EQ,
 				value1: flose
 			}));
