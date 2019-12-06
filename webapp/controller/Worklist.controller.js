@@ -979,7 +979,7 @@ sap.ui.define([
 									ITEMNR: res.ITEMNR,
 									EAN11: res.EAN11,
 									// COMP: res[iRowIndex].COMP,
-									VAL: res.VRKME,
+									VAL: "NEW",
 									QTYV: 0
 								};
 
