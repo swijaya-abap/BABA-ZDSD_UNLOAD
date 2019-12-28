@@ -9,7 +9,7 @@
 				</ComboBox>
 				<Label text="Date" required="true"/>
 				<HBox>
-					<DatePicker id="DATE" width="auto" displayFormat="dd.MM.YYYY" valueFormat="dd.MM.YYYY" change="onClr"/>
+					<DatePicker id="DATE" width="auto" displayFormat="short" valueFormat="MM/dd/yyyy" change="onClr"/>
 					<Button xmlns="sap.m" text="Get" id="button0" press="onGet" width="auto"/>
 				</HBox>
 				<ComboBox id="oSelect2" items="{ path: '/data' }" width="auto" change="onTour" busyIndicatorDelay="20000">

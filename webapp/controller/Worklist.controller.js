@@ -112,7 +112,7 @@ sap.ui.define([
 			if (this.byId("RbMDTFinal").getSelected()) {
 				this.globalVar.MDT_FLOSE = "X";
 				var kunnr = this.getView().byId("oSelect1").getSelectedKey();
-				var date = this.getView().byId("DATE").getValue();
+				var date = this._convertDateToSAP(this.getView().byId("DATE").getValue());
 				var oModel = this.getView().byId("table").getModel();
 				var val = "";
 				var uncnf = "";
@@ -263,7 +263,7 @@ sap.ui.define([
 
 		_filterRelated: function () {
 			var kunnr = this.getView().byId("oSelect1").getSelectedKey();
-			var date = this.getView().byId("DATE").getValue();
+			var date = this._convertDateToSAP(this.getView().byId("DATE").getValue());
 			var oModel = this.getView().byId("table").getModel();
 			var val = "";
 			var uncnf = "";
@@ -1133,7 +1133,7 @@ sap.ui.define([
 		onGet: function (oEvent) {
 			var that = this;
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
-			var date = that.getView().byId("DATE").getValue();
+			var date = this._convertDateToSAP(that.getView().byId("DATE").getValue());
 			that.getView().byId("TOUR").setValue();
 			that.getView().byId("NMATNR").setValue();
 			that.getView().byId("CONF").setSelected(false);
@@ -1286,7 +1286,7 @@ sap.ui.define([
 		onGetV: function (oEvent) {
 			var that = this;
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
-			var date = that.getView().byId("DATE").getValue();
+			var date = this._convertDateToSAP(that.getView().byId("DATE").getValue());
 			var uncnf = "";
 			var tour = this.getView().byId("TOUR")._lastValue;
 			if (tour === "") {
@@ -1307,7 +1307,7 @@ sap.ui.define([
 
 		onFet: function (oEvent) {
 			var kunnr = this.getView().byId("oSelect1").getSelectedKey();
-			var date = this.getView().byId("DATE").getValue();
+			var date = this._convertDateToSAP(this.getView().byId("DATE").getValue());
 			var uncnf = "";
 			var tour = this.getView().byId("TOUR")._lastValue;
 			this.globalVar.tour_id = tour;
@@ -1333,7 +1333,7 @@ sap.ui.define([
 		onUnc: function (oEvent) {
 			var that = this;
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
-			var date = that.getView().byId("DATE").getValue();
+			var date = this._convertDateToSAP(that.getView().byId("DATE").getValue());
 			var uncnf = "X";
 			var tour = this.getView().byId("TOUR")._lastValue;
 			if (tour === "") {
@@ -1374,7 +1374,7 @@ sap.ui.define([
 			var traa = that.getView().byId("TRAA").getSelected();
 
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
-			var date = that.getView().byId("DATE").getValue();
+			var date = this._convertDateToSAP(that.getView().byId("DATE").getValue());
 			var uncnf = "X";
 			var oModel = that.getView().byId("table").getModel();
 
@@ -1398,7 +1398,7 @@ sap.ui.define([
 		onAll: function (oEvent) {
 			var that = this;
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
-			var date = that.getView().byId("DATE").getValue();
+			var date = this._convertDateToSAP(that.getView().byId("DATE").getValue());
 			var uncnf = "X";
 			var tour = this.getView().byId("TOUR")._lastValue;
 			if (tour === "") {
@@ -1439,7 +1439,7 @@ sap.ui.define([
 			var brka = that.getView().byId("BRKAA").getSelected();
 
 			var kunnr = that.getView().byId("oSelect1").getSelectedKey();
-			var date = that.getView().byId("DATE").getValue();
+			var date = this._convertDateToSAP(that.getView().byId("DATE").getValue());
 			var uncnf = "";
 			var oModel = that.getView().byId("table").getModel();
 
@@ -2702,6 +2702,13 @@ sap.ui.define([
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
+
+		_convertDateToSAP: function (iDate) {
+			var dateFormatc = sap.ui.core.format.DateFormat.getDateInstance({
+				pattern: "dd.MM.yyyy"
+			});
+			return dateFormatc.format(new Date(iDate));
+		},
 
 		/**
 		 * Shows the selected item on the object page
