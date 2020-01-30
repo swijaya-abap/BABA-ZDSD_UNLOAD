@@ -500,6 +500,8 @@ sap.ui.define([
 								itemData.push(itemRow);
 							}
 
+							that._setIsChanged(true);
+
 							oModel2.setData({
 								data: itemData
 							});
@@ -706,6 +708,8 @@ sap.ui.define([
 								itemData.push(itemRow);
 							}
 
+							that._setIsChanged(true);
+
 							oModel2.setData({
 								data: itemData
 							});
@@ -891,6 +895,8 @@ sap.ui.define([
 								itemData.push(itemRow);
 							}
 
+							that._setIsChanged(true);
+
 							oModel2.setData({
 								data: itemData
 							});
@@ -997,6 +1003,8 @@ sap.ui.define([
 								oModel.refresh(true);
 							}
 							sap.m.MessageToast.show("Item " + res.MATNR + " added");
+
+							that._setIsChanged(true);
 
 							//************************get values from backend based on filter Date*******************************************//
 							that.onBusyE(oBusy);
@@ -1143,6 +1151,7 @@ sap.ui.define([
 				sap.m.MessageToast.show("Please provide Route & date");
 			} else {
 				var oModel = that.getView().byId("oSelect2").getModel();
+				this._setIsChanged(false);
 				that.onRef(that);
 				that.onblank(that);
 				that.onblankc(that);
@@ -1256,6 +1265,8 @@ sap.ui.define([
 				} else {
 					// End of Version 3
 
+					this._setIsChanged(true);
+
 					colVal_qtyd = Number(colVal_qtyd);
 
 					if (colVal_qtyc === "" || colVal_qtyc === "0" || colVal_qtyc === "0.000") {
@@ -1318,6 +1329,7 @@ sap.ui.define([
 				if (kunnr === "" || date === "") {
 					sap.m.MessageToast.show("Please provide Route & date");
 				} else {
+					this._setIsChanged(false);
 					var oModel = this.getView().byId("table").getModel();
 					// that.onRef(that);
 					this.globalVar.isFetching = true;
@@ -1343,22 +1355,24 @@ sap.ui.define([
 				if (kunnr === "" || date === "") {
 					sap.m.MessageToast.show("Please provide Route & date");
 				} else {
-					var oModel = that.getView().byId("table").getModel();
-					that.onRef(that);
-					that.onblank(that);
 
-					var oView = that.getView();
-					var oDialog = oView.byId("PDialog");
-					// create dialog lazily
-					if (!oDialog) {
-						// create dialog via fragment factory
-						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V3.view.PDialog", this);
-						// connect dialog to view (models, lifecycle)
-						oView.addDependent(oDialog);
+					if (this._validateChanges()) {
+						var oModel = that.getView().byId("table").getModel();
+						that.onRef(that);
+						that.onblank(that);
+
+						var oView = that.getView();
+						var oDialog = oView.byId("PDialog");
+						// create dialog lazily
+						if (!oDialog) {
+							// create dialog via fragment factory
+							oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V3.view.PDialog", this);
+							// connect dialog to view (models, lifecycle)
+							oView.addDependent(oDialog);
+						}
+						oDialog.setTitle("Search Pending Items");
+						oDialog.open();
 					}
-					oDialog.setTitle("Search Pending Items");
-					oDialog.open();
-
 					// that.onGetM(kunnr, date, uncnf, oModel);
 				}
 			}
@@ -1408,21 +1422,25 @@ sap.ui.define([
 				if (kunnr === "" || date === "") {
 					sap.m.MessageToast.show("Please provide Route & date");
 				} else {
-					var oModel = that.getView().byId("table").getModel();
-					that.onRef(that);
-					that.onblank(that);
 
-					var oView = that.getView();
-					var oDialog = oView.byId("PDialog");
-					// create dialog lazily
-					if (!oDialog) {
-						// create dialog via fragment factory
-						oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V3.view.ADialog", this);
-						// connect dialog to view (models, lifecycle)
-						oView.addDependent(oDialog);
+					if (this._validateChanges()) {
+						var oModel = that.getView().byId("table").getModel();
+						that.onRef(that);
+						that.onblank(that);
+
+						var oView = that.getView();
+						var oDialog = oView.byId("PDialog");
+						// create dialog lazily
+						if (!oDialog) {
+							// create dialog via fragment factory
+							oDialog = sap.ui.xmlfragment(oView.getId(), "com.baba.ZDSD_UNLOAD_V3.view.ADialog", this);
+							// connect dialog to view (models, lifecycle)
+							oView.addDependent(oDialog);
+						}
+						oDialog.setTitle("Search All Items");
+						oDialog.open();
+
 					}
-					oDialog.setTitle("Search All Items");
-					oDialog.open();
 
 					// that.onGetM(kunnr, date, uncnf, oModel);
 				}
@@ -2598,6 +2616,8 @@ sap.ui.define([
 										itemData.push(itemRow);
 									}
 
+									that._setIsChanged(true);
+
 									// }
 
 									// // Set Model
@@ -2708,6 +2728,19 @@ sap.ui.define([
 				pattern: "dd.MM.yyyy"
 			});
 			return dateFormatc.format(new Date(iDate));
+		},
+
+		_setIsChanged: function (iStatus) {
+			this.globalVar.isChanged = iStatus;
+		},
+
+		_validateChanges: function () {
+			if (this.globalVar.isChanged === true) {
+				sap.m.MessageToast.show("Data has been changed, please save it before changing filter criteria");
+				return false;
+			} else {
+				return true;
+			}
 		},
 
 		/**
